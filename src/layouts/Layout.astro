@@ -20,6 +20,14 @@ const navLinks = [
   { href: '/contact', route: 'contact', num: '04', label: 'Contact' },
 ];
 
+const drawerLinks = [
+  { href: '/',        route: 'home',    num: '00', label: 'Home.',                    italic: ''        },
+  { href: '/work',    route: 'work',    num: '01', label: 'Selected ',                italic: 'work.'   },
+  { href: '/about',   route: 'about',   num: '02', label: 'About.',                   italic: ''        },
+  { href: '/words',   route: 'words',   num: '03', label: '',                          italic: 'Words'   , labelAfter: ' & notes.' },
+  { href: '/contact', route: 'contact', num: '04', label: '',                          italic: 'Hi.'     },
+];
+
 const overlayTitles: Record<string, string> = {
   home:    'Home',
   work:    'Selected <span class="italic">work.</span>',
@@ -134,8 +142,57 @@ const overlayTitles: Record<string, string> = {
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
       </svg>
     </button>
+    <button class="nav-burger tappable" id="nav-burger"
+            aria-label="Open menu" aria-controls="navDrawer" aria-expanded="false">
+      <span></span>
+      <span></span>
+    </button>
   </div>
 </nav>
+
+<!-- ── Mobile drawer ─────────────────────────────────────────────── -->
+<div class="drawer" id="navDrawer" aria-hidden="true">
+  <div class="drawer-header">
+    <span class="drawer-brand"><b>Abel Teame</b> · menu</span>
+    <button type="button" class="drawer-close tappable" aria-label="Close menu">
+      <span>Close</span>
+      <span class="x" aria-hidden="true">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+          <path d="M1 1l9 9M10 1l-9 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <nav class="drawer-links">
+    {drawerLinks.map(({ href, route, num, label, italic, labelAfter }) => (
+      <a href={href} class="drawer-link tappable" data-route={route}>
+        <span class="num">{num}</span>
+        <span class="lbl">
+          {label}{italic && <span class="italic">{italic}</span>}{labelAfter ?? ''}
+        </span>
+        <span class="arr">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 8L8 2M8 2H3M8 2v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </a>
+    ))}
+  </nav>
+
+  <div class="drawer-foot">
+    <a href="mailto:abelteame22@gmail.com" class="drawer-email tappable">
+      <span class="live-dot" aria-hidden="true"></span>
+      abelteame22@gmail.com
+    </a>
+    <div class="drawer-socials">
+      <a href="#" class="tappable">x</a>
+      <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="tappable">github</a>
+      <a href="https://linkedin.com/in/abelteame" target="_blank" rel="noopener" class="tappable">linkedin</a>
+      <a href="#" class="tappable">read.cv</a>
+    </div>
+  </div>
+</div>
 
 <!-- ── Page content ─────────────────────────────────────────────── -->
 <div data-barba="wrapper">

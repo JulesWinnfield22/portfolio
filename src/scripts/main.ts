@@ -63,6 +63,45 @@ function initNav(): void {
   });
 }
 
+// ── MOBILE DRAWER ──────────────────────────────────────────────────
+function initDrawer(): void {
+  const burger  = document.getElementById('nav-burger')  as HTMLButtonElement | null;
+  const drawer  = document.getElementById('navDrawer')   as HTMLElement | null;
+  const closeBtn = drawer?.querySelector<HTMLButtonElement>('.drawer-close');
+  if (!burger || !drawer) return;
+
+  function open(): void {
+    document.body.classList.add('menu-open');
+    burger!.setAttribute('aria-expanded', 'true');
+    burger!.setAttribute('aria-label', 'Close menu');
+    drawer!.setAttribute('aria-hidden', 'false');
+  }
+  function close(): void {
+    document.body.classList.remove('menu-open');
+    burger!.setAttribute('aria-expanded', 'false');
+    burger!.setAttribute('aria-label', 'Open menu');
+    drawer!.setAttribute('aria-hidden', 'true');
+  }
+
+  burger.addEventListener('click', () =>
+    document.body.classList.contains('menu-open') ? close() : open()
+  );
+  closeBtn?.addEventListener('click', close);
+
+  // Drawer link clicks — close drawer; Barba transition handles navigation
+  drawer.querySelectorAll<HTMLElement>('.drawer-link').forEach(link => {
+    link.addEventListener('click', close);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('menu-open')) close();
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 720 && document.body.classList.contains('menu-open')) close();
+  }, { passive: true });
+}
+
 // ── CLOCK ─────────────────────────────────────────────────────────
 function initClock(): void {
   const el = document.getElementById('clock');
@@ -502,6 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLenis();
   initCursor();
   initTheme();
+  initDrawer();
   initTransitionLinks();
   initPageInteractions();
 
