@@ -118,7 +118,7 @@ function initClock(): void {
 // ── CURSOR ─────────────────────────────────────────────────────────
 function initCursor(): void {
   const cursor = document.getElementById('cursor');
-  if (!cursor || window.matchMedia('(hover: none)').matches) return;
+  if (!cursor || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
   // start hidden — prevents the cursor sliding from (0,0) to the mouse
   // position on every page load/navigation
@@ -170,7 +170,7 @@ function initCursor(): void {
 // ── HOVER THUMB (PREVIEW CARD) ────────────────────────────────────
 function initHoverThumb(root: Document | Element = document): void {
   const card = document.getElementById('thumb');
-  if (!card || window.matchMedia('(hover: none)').matches) return;
+  if (!card || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
   const rows = Array.from(root.querySelectorAll<HTMLElement>('.work-row'));
   if (!rows.length) return;
