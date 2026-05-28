@@ -563,11 +563,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // bfcache restore (browser back/forward) — Lenis was stopped before navigation,
 // re-initialize it so scroll works on the restored page.
 window.addEventListener('pageshow', (e) => {
-  if (e.persisted) {
-    document.body.classList.remove('menu-open');
-    initLenis();
-    lenis?.start();
-    initDrawer();
-    initPageInteractions();
-  }
+  if (!e.persisted) return;
+  // bfcache restore — DOMContentLoaded does not fire, re-run everything
+  document.body.classList.remove('menu-open');
+  initLenis();
+  lenis?.start();
+  initCursor();
+  initTheme();
+  initDrawer();
+  initTransitionLinks();
+  initPageInteractions();
 });
