@@ -567,5 +567,7 @@ window.addEventListener('pageshow', (e) => {
     document.body.classList.remove('menu-open');
     initLenis();
     lenis?.start();
+    initDrawer();
+    initPageInteractions();
   }
 });
