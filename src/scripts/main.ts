@@ -540,6 +540,9 @@ function initTransitionLinks(): void {
 
 // ── BOOT ───────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Disable browser scroll restoration so it doesn't conflict with Lenis
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
   initLenis();
   initCursor();
   initTheme();
@@ -554,5 +557,15 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     // first/direct load — no overlay, just animate hero
     animateHeroIn();
+  }
+});
+
+// bfcache restore (browser back/forward) — Lenis was stopped before navigation,
+// re-initialize it so scroll works on the restored page.
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) {
+    document.body.classList.remove('menu-open');
+    initLenis();
+    lenis?.start();
   }
 });
