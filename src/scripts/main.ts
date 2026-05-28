@@ -307,6 +307,8 @@ function initHoverThumb(root: Document | Element = document): void {
       if (rel?.closest('.work-row')) return;
       hideCard();
     });
+
+    row.addEventListener('click', () => hideCard());
   });
 
   // ── scroll tracking ───────────────────────────────────────────────
