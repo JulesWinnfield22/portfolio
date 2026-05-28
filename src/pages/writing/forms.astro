@@ -1,0 +1,314 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const snippets = {
+  provider: `\`\`\`
+// Form.vue
+const form = ref(
+  useForm({
+    defaultValues: props.defaultValues,
+    onSubmit: ({ value }) => emit("submit", value),
+  })
+);
+
+const is_actually_dirty = computed(() =>
+  hashForCompare(form.value.state.values) !==
+  hashForCompare(props.defaultValues)
+);
+
+provide("formContext", {
+  id: props.id,
+  form: form.value,
+  is_dirty: is_actually_dirty,
+});
+\`\`\``,
+
+  inputParent: `// InputParent.vue (simplified)
+const { form } = inject("formContext");
+
+// Bind field to TanStack form.Field
+// onBlur runs first, onChange only fires after field is touched
+validators: {
+  onBlur:   ({ value }) => runValidators(value, props.validation),
+  onChange:  ({ value }) => isFieldTouched
+               ? runValidators(value, props.validation)
+               : undefined,
+  onSubmit: ({ value }) => runValidators(value, props.validation),
+}`,
+
+  validators: `// validations.ts
+export const required = (value: any) =>
+  !value && value !== 0 ? "This field is required" : undefined;
+
+export const maxLength = (max: number) => (value: string) =>
+  value?.length > max ? \`Max \${max} characters\` : undefined;
+
+export const phone = (value: string) =>
+  value && !/^(\\+251|0)[79]\\d{8}$/.test(value)
+    ? "Enter a valid Ethiopian phone number"
+    : undefined;
+
+// Run all validators, return first error
+export const validateAll = (value: any, validators: ValidatorFn[]) => {
+  for (const fn of validators) {
+    const err = fn(value);
+    if (err) return err;
+  }
+  return undefined;
+};`,
+
+  usage: `<Input
+  name="phone"
+  label="Phone number"
+  :validation="{ required, phone }"
+/>`,
+
+  fakeId: `// Each item gets a stable fakeId when added to the list
+const items = reactive([
+  { fakeId: genId(), name: "", quantity: 0 },
+]);
+
+function addItem() {
+  items.push({ fakeId: genId(), name: "", quantity: 0 });
+}
+
+function removeItem(id: string) {
+  const i = items.findIndex(item => item.fakeId === id);
+  items.splice(i, 1);
+}
+
+// Sync the array back to the form field
+watch(items, (val) => {
+  form.setFieldValue("parts", val.map(i => i.value));
+}, { deep: true });`,
+
+  fakeIdValidation: `// Errors are keyed by fakeId, not index
+const errors = reactive<Record<string, string>>({});
+
+validateArrayItems(items, errors, {
+  name:     { required },
+  quantity: { required, min: 1 },
+});
+
+// Error keys look like: "name_abc123", "quantity_abc123"
+// So removing item at index 0 doesn't accidentally clear
+// the error that belongs to the item now at index 0`,
+
+  fakeIdStrip: `// Before the payload hits the API, fakeId is stripped automatically
+// Input:
+[
+  { fakeId: "abc123", name: "Oil filter", quantity: 2 },
+  { fakeId: "def456", name: "Brake pad",  quantity: 4 },
+]
+
+// What the API receives:
+[
+  { name: "Oil filter", quantity: 2 },
+  { name: "Brake pad",  quantity: 4 },
+]`,
+
+  hash: `function hashForCompare(val: any): string {
+  if (val instanceof File)
+    return \`File:\${val.name}:\${val.size}:\${val.lastModified}\`;
+  if (val instanceof Date)
+    return \`Date:\${val.toISOString()}\`;
+  if (Array.isArray(val))
+    return \`[\${val.map(hashForCompare).join(",")}]\`;
+  if (val && typeof val === "object")
+    return \`{\${Object.entries(val)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => \`\${k}:\${hashForCompare(v)}\`)
+      .join(",")}}\`;
+  return String(val ?? "");
+}`,
+};
+---
+
+<Layout title="How I Build Forms · Abel Teame" namespace="words">
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <a href="/words" class="tappable">Words</a>
+      <span class="sep">/</span>
+      <span class="here">Forms</span>
+    </div>
+    <h1>
+      How I build forms <span class="italic">without losing my mind.</span>
+    </h1>
+    <div class="ph-meta">
+      <div class="article-meta">
+        <span>May 2026</span>
+        <span>·</span>
+        <span>8 min read</span>
+        <span>·</span>
+        <span>Vue.js · TanStack Form · TypeScript</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section wrap">
+    <div class="prose" data-reveal>
+      <p>
+        Forms are where most frontend apps quietly fall apart. Not dramatically
+        — just slowly, through accumulated workarounds, edge cases, and "we'll
+        fix the validation later" comments that become load-bearing. I've built
+        a lot of forms. Here's the system I landed on, and why.
+      </p>
+
+      <h2>The problem with doing it manually</h2>
+
+      <p>
+        The naive approach — a bunch of <code>ref()</code> values, a submit handler,
+        some <code>v-if</code> error messages — works for a login form. It falls over
+        when you have 20 fields, conditional validation, cross-field dependencies,
+        and a designer who keeps adding new input types. I've been there. It's not
+        fun.
+      </p>
+
+      <p>
+        I moved to <strong>TanStack Vue Form</strong> as the base layer. It handles
+        field state, touched/dirty tracking, and submit validation. But I don't expose
+        it directly to every component — that would create tight coupling everywhere.
+        Instead, I wrap it in a <code>provide/inject</code> pattern so any field in
+        the tree can bind to the form without knowing anything about its parents.
+      </p>
+
+      <h2>The Form provider</h2>
+
+      <p>
+        The root <code>Form.vue</code> creates a TanStack form instance and provides
+        context to all descendants. Any component that needs the form just calls
+        <code>inject("formContext")</code>. No prop drilling, no Pinia store —
+        just Vue's built-in dependency injection.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.provider} /></pre>
+
+      <h2>InputParent — the field wrapper</h2>
+
+      <p>
+        Every input component wraps <code>InputParent.vue</code>, which binds
+        the field to TanStack's <code>form.Field</code> and runs validation. The key
+        detail: <code>onChange</code> only validates if the field has already been
+        touched via <code>onBlur</code>. This stops the form from screaming at
+        users before they've even tried.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.inputParent} /></pre>
+
+      <div class="callout">
+        <p>
+          The actual UI — label, error message, slot layout — lives in a
+          separate
+          <code>InputLayout.vue</code>. The layers are split deliberately:
+          binding logic in InputParent, visual logic in InputLayout.
+        </p>
+      </div>
+
+      <h2>The validation system</h2>
+
+      <p>
+        All validators live in a single <code>validations.ts</code> file — 35+ functions,
+        each returning <code>undefined</code> (valid) or a string (error message).
+        They compose with <code>validateAll</code> which runs them in order and returns
+        the first failure:
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.validators} /></pre>
+
+      <p>Using them on a field:</p>
+
+      <pre data-lang="vue"><code set:text={snippets.usage} /></pre>
+
+      <h2>Dirty tracking that actually works</h2>
+
+      <p>
+        TanStack Form's built-in dirty tracking doesn't handle <code>File</code> objects
+        or nested arrays properly — it compares by reference, not value. So I wrote
+        a hash function that serializes the entire form state to a string and compares
+        that instead. This feeds into a route guard that prompts "You have unsaved
+        changes" before navigation.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.hash} /></pre>
+
+      <h2>The part nobody talks about: payload sanitization</h2>
+
+      <p>
+        Before form values hit the API, they go through a cleaning pipeline:
+      </p>
+
+      <ul>
+        <li>
+          Strip <code>fakeId</code> markers from array items (used for stable key
+          tracking in dynamic fields)
+        </li>
+        <li>Remove empty strings, null, and undefined</li>
+        <li>Coerce numeric strings to actual numbers</li>
+        <li>
+          Allow specific fields to bypass sanitization via an explicit list
+        </li>
+      </ul>
+
+      <p>
+        This means the API always gets clean data, and I'm not littering every
+        submit handler with the same 15 lines of cleanup logic. The form handles
+        it. That's the deal.
+      </p>
+
+      <h2>The fakeId trick for dynamic array fields</h2>
+
+      <p>
+        Some forms have a variable-length list of inputs — a maintenance form
+        where you add as many parts as needed, each with a name and quantity.
+        Every item in the list has the same field names. That creates a tracking
+        problem: if you delete the first item, everything shifts index, and your
+        validation errors end up pointing at the wrong rows.
+      </p>
+
+      <p>
+        The fix is a <code>fakeId</code> — a generated ID attached to each item
+        when it's created. It never goes to the server. Its only job is to
+        give each row a stable identity for the lifetime of the form session.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.fakeId}></code></pre>
+
+      <p>
+        Validation errors are then keyed by <code>fakeId</code> instead of array index.
+        Delete the first row, and the error for the second row stays exactly where it was —
+        because we're tracking by identity, not position.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.fakeIdValidation}></code></pre>
+
+      <div class="callout">
+        <p>
+          This is the kind of bug that doesn't show up until a user deletes a row
+          mid-form and suddenly gets a validation error on a field they filled in correctly.
+          fakeId makes that impossible.
+        </p>
+      </div>
+
+      <p>
+        On submit, the sanitization pipeline strips every <code>fakeId</code> key
+        from every object in every array before the payload leaves the client.
+        The API never sees it.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.fakeIdStrip}></code></pre>
+
+      <h2>What I'd change</h2>
+
+      <p>
+        The <code>provide/inject</code> approach works well but makes TypeScript angry
+        unless you're careful with generic types. I've lost a non-trivial amount of
+        time to type errors that were entirely my fault. If I were starting over,
+        I'd define the context type more strictly upfront instead of reaching for
+        <code>any</code> and fixing it later — which is, I'll admit, exactly what
+        I did.
+      </p>
+    </div>
+  </section>
+</Layout>

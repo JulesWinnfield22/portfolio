@@ -1,0 +1,42 @@
+---
+export interface Props {
+  title: string;
+  titleItalic?: string;
+  lede: string;
+  ledeItalic?: string;
+  metaLabel: string;
+  metaValue: string;
+  crumb: string;
+  crumbHref?: string;
+}
+
+const {
+  title,
+  titleItalic,
+  lede,
+  ledeItalic,
+  metaLabel,
+  metaValue,
+  crumb,
+  crumbHref = '/',
+} = Astro.props;
+---
+
+<header class="page-header wrap" data-reveal>
+  <div class="crumbs">
+    <a href={crumbHref} class="tappable">Home</a>
+    <span class="sep">/</span>
+    <span class="here">{crumb}</span>
+  </div>
+  <h1>
+    {title}{titleItalic && <> <span class="italic">{titleItalic}</span></>}
+  </h1>
+  <div class="ph-meta">
+    <p class="lede">
+      {lede}{ledeItalic && <> <span class="italic">{ledeItalic}</span></>}
+    </p>
+    <div class="meta-right">
+      <b>{metaLabel}</b>{metaValue}
+    </div>
+  </div>
+</header>

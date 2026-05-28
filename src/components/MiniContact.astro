@@ -1,0 +1,30 @@
+---
+export interface Props {
+  label?: string;
+  heading?: string;
+  italic?: string;
+  cta?: string;
+}
+
+const {
+  label   = '/ get in touch',
+  heading = 'Got an idea?',
+  italic  = "Let's talk.",
+  cta     = 'Start a project',
+} = Astro.props;
+---
+
+<section class="mini-contact">
+  <div class="mini-contact-inner">
+    <div>
+      <div class="crumbs">{label}</div>
+      <h3>{heading} <span class="italic">{italic}</span></h3>
+    </div>
+    <a href="/contact" data-route="contact" class="mini-contact-cta tappable">
+      {cta}
+      <svg width="20" height="20" viewBox="0 0 14 14" fill="none">
+        <path d="M3 11L11 3M11 3H4M11 3V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </a>
+  </div>
+</section>

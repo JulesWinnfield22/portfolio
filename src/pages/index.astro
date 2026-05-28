@@ -1,0 +1,110 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Marquee from '../components/Marquee.astro';
+import WorkRow from '../components/WorkRow.astro';
+import MiniContact from '../components/MiniContact.astro';
+
+const previewProjects = [
+  { num: '01', name: 'FETAP',      italic: 'insurance platform', tags: ['Insurance','Vue.js','Live'],  year: '25', thumb: 'FETAP — foreign employment assurance', thumbMeta: 'Insurance · 2025',  href: 'https://niscofetap.com',        image: '/assets/fetap.jpg'              },
+  { num: '02', name: 'Kenema',     italic: 'pharmacy platform',  tags: ['Healthcare','Vue.js','Live'], year: '24', thumb: 'Kenema — pharmacy enterprise',         thumbMeta: 'Healthcare · 2024', href: 'https://rx.kenemapharmacy.com', image: '/assets/kenema.jpg'             },
+  { num: '03', name: 'Chinetlink', italic: 'logistics platform', tags: ['Next.js','Current','Live'],   year: '26', thumb: 'Chinetlink — logistics platform',       thumbMeta: 'Logistics · 2026',  href: 'https://chinetlink.et/',        video: '/assets/chinetlink.webm' },
+];
+---
+
+<Layout title="Abel Teame — Software Developer" namespace="home">
+
+  <!-- ── HERO ──────────────────────────────────────────────────── -->
+  <header class="hero wrap" id="top">
+
+    <div class="hero-status hero-load d1">
+      <div class="col">
+        <span>// based</span>
+        <b>Addis Ababa · UTC+3</b>
+      </div>
+      <div class="col">
+        <span>// inbox</span>
+        <b>abelteame22@gmail.com</b>
+      </div>
+    </div>
+
+    <h1 class="hero-name hero-load d2">
+      <span class="row">
+        <span>ABEL</span>
+        <span class="small">[æ·bəl]<br>noun · builder</span>
+      </span>
+      <span class="row row-2">
+        <span>
+          <span class="acc">T</span>EAME<span class="star"><svg><use href="#logo-at"/></svg></span>
+        </span>
+      </span>
+    </h1>
+
+    <div class="hero-bottom hero-load d3">
+      <p class="hero-tagline">
+        Software developer based in Addis Ababa. I build web apps,
+        tools, and platforms — a lot of it in health, insurance, and logistics,
+        <span class="acc">but not limited to any one domain.</span>
+        If it ships to production and real people use it, that's the work I want.
+      </p>
+      <div class="right">
+        <div class="scroll-cue">
+          <span>scroll</span>
+          <span class="line"></span>
+          <span>05 sections</span>
+        </div>
+      </div>
+    </div>
+
+  </header>
+
+  <!-- ── MARQUEE ────────────────────────────────────────────────── -->
+  <Marquee />
+
+  <!-- ── SELECTED WORK PREVIEW ─────────────────────────────────── -->
+  <section class="home-preview wrap">
+    <div class="pv-head" data-reveal>
+      <div>
+        <div class="label">/ selected work · '23–'25</div>
+        <h3>Three projects, <span class="italic">all in production.</span></h3>
+      </div>
+      <a href="/work" data-route="work" class="see-all tappable">See all 05 →</a>
+    </div>
+
+    <div class="work-list" data-reveal-stagger>
+      {previewProjects.map((p) => (
+        <WorkRow
+          num={p.num}
+          name={p.name}
+          italic={p.italic}
+          tags={p.tags}
+          year={p.year}
+          thumb={p.thumb}
+          thumbMeta={p.thumbMeta}
+          href={p.href}
+          video={p.video}
+          image={p.image}
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- ── ABOUT TEASER ───────────────────────────────────────────── -->
+  <section class="home-about wrap" data-reveal>
+    <div class="left">
+      / about · the person
+      <b>Abel Teame, engineer<br>Addis Ababa · since 2019</b>
+    </div>
+    <div class="right">
+      <h3>
+        I build across domains — most of my production work has been in health,
+        insurance, and logistics, but I'm not locked into any one vertical.
+        <span class="italic">Good problems are good problems.</span>
+      </h3>
+      <a href="/about" data-route="about" class="more tappable">Read more →</a>
+    </div>
+  </section>
+
+  <!-- ── MINI CONTACT ───────────────────────────────────────────── -->
+  <MiniContact label="/ get in touch" heading="Got an idea?" italic="Let's talk." cta="Start a conversation" />
+
+</Layout>

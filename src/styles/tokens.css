@@ -1,0 +1,56 @@
+/* ── DESIGN TOKENS ─────────────────────────────────────────────── */
+:root {
+  /* Colors – dark (default) */
+  --bg:          #0c0c0a;
+  --bg-2:        #141411;
+  --bg-3:        #1c1c18;
+  --ink:         #ededeb;
+  --ink-2:       #d3cfc4;
+  --muted:       #8a8576;
+  --rule:        rgba(237,237,235,.12);
+  --rule-strong: rgba(237,237,235,.22);
+  --accent:      #ff5a1f;
+  --accent-soft: rgba(255,90,31,.14);
+
+  /* Typefaces */
+  --display: 'Bricolage Grotesque', 'Helvetica Neue', sans-serif;
+  --serif:   'Instrument Serif', 'Times New Roman', serif;
+  --mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  /* Spacing */
+  --pad-x:       clamp(20px, 4vw, 80px);
+  --pad-section: clamp(80px, 12vh, 180px);
+
+  /* Easing */
+  --ease:         cubic-bezier(.2,.7,.2,1);
+  --ease-out:     cubic-bezier(.16,1,.3,1);
+  --ease-overlay: cubic-bezier(.85,0,.15,1);
+}
+
+/* Light mode */
+body[data-theme="light"] {
+  --bg:          #f3f0e8;
+  --bg-2:        #ebe8df;
+  --bg-3:        #e2dfd5;
+  --ink:         #161614;
+  --ink-2:       #3a3833;
+  --muted:       #8a8576;
+  --rule:        rgba(22,22,20,.12);
+  --rule-strong: rgba(22,22,20,.22);
+  --accent-soft: rgba(255,90,31,.14);
+}
+
+/* Density */
+body[data-density="compact"] {
+  --pad-x:       clamp(16px,3vw,48px);
+  --pad-section: clamp(56px,8vh,120px);
+}
+body[data-density="airy"] {
+  --pad-x:       clamp(24px,5vw,112px);
+  --pad-section: clamp(120px,18vh,240px);
+}
+
+/* Font swap */
+body[data-type="bricolage"] { --display: 'Bricolage Grotesque', sans-serif; }
+body[data-type="serif"]     { --display: 'Instrument Serif', serif; }
+body[data-type="mono"]      { --display: 'JetBrains Mono', monospace; }

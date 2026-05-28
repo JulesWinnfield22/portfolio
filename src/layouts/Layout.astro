@@ -1,0 +1,176 @@
+---
+export interface Props {
+  title?: string;
+  namespace?: string;
+  preloads?: { href: string; as: string; type?: string }[];
+}
+
+import '../styles/global.css';
+
+const {
+  title = 'Abel Teame — Engineer',
+  namespace = 'home',
+  preloads = [],
+} = Astro.props;
+
+const navLinks = [
+  { href: '/work',    route: 'work',    num: '01', label: 'Work' },
+  { href: '/about',   route: 'about',   num: '02', label: 'About' },
+  { href: '/words',   route: 'words',   num: '03', label: 'Words' },
+  { href: '/contact', route: 'contact', num: '04', label: 'Contact' },
+];
+
+const overlayTitles: Record<string, string> = {
+  home:    'Home',
+  work:    'Selected <span class="italic">work.</span>',
+  about:   'About.',
+  words:   'Words.',
+  contact: '<span class="italic">Hi.</span>',
+};
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title}</title>
+  {preloads.map((p: { href: string; as: string; type?: string }) => (
+    <link rel="preload" href={p.href} as={p.as} type={p.type} />
+  ))}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <!-- global.css injected by Astro via frontmatter import -->
+  <!-- run before first paint: if arriving via transition, cover panels immediately -->
+  <script is:inline>
+    if (sessionStorage.getItem('ot-ns')) {
+      document.documentElement.classList.add('is-transitioning');
+    }
+  </script>
+</head>
+<body data-theme="dark" data-type="bricolage" data-density="airy">
+<!-- restore saved theme before first paint -->
+<script is:inline>
+  const _t = localStorage.getItem('ot-theme');
+  if (_t) document.body.dataset.theme = _t;
+</script>
+
+<!-- ── Logo sprite ──────────────────────────────────────────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="logo-at" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.5 21 L12 3 L20.5 21" />
+        <path d="M3.5 13 L20.5 13" />
+        <path d="M12 13 L12 17" />
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ── Custom cursor ────────────────────────────────────────────── -->
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+<!-- ── Hover thumb ──────────────────────────────────────────────── -->
+<!-- JS builds .preview-cover children dynamically from .work-row data -->
+<div class="thumb-follow" id="thumb" aria-hidden="true"></div>
+
+<!-- ── Page transition overlay ──────────────────────────────────── -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="overlay-panel back"></div>
+  <div class="overlay-panel front">
+    <div class="overlay-content" id="overlay-content">
+      <div class="overlay-logo">
+        <svg viewBox="0 0 24 24" width="100%" height="100%" style="animation:spin 5s linear infinite">
+          <use href="#logo-at"/>
+        </svg>
+      </div>
+      <div class="overlay-route" id="overlay-route">/ home</div>
+      <div class="overlay-title" id="overlay-title" set:html={overlayTitles[namespace] ?? 'Home'} />
+    </div>
+  </div>
+</div>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav class="nav" id="nav" role="navigation">
+  <a href="/" class="brand tappable" data-barba-prevent="self">
+    <span class="brand-mark">
+      <span class="logo"><svg><use href="#logo-at"/></svg></span>
+    </span>
+    <span>
+      Abel Teame<br>
+      <span style="color:var(--muted)">Engineer · 2026</span>
+    </span>
+  </a>
+  <div class="nav-links">
+    {navLinks.map(({ href, route, num, label }) => (
+      <a
+        href={href}
+        class={`tappable${namespace === route ? ' is-active' : ''}`}
+        data-route={route}
+      >
+        <span class="num">{num}</span>{label}
+      </a>
+    ))}
+  </div>
+  <div class="nav-actions">
+    <button class="theme-toggle tappable" id="theme-toggle" aria-label="Toggle theme">
+      <!-- sun: visible in dark mode -->
+      <svg class="icon-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <line x1="12" y1="2"    x2="12" y2="5"/>
+        <line x1="12" y1="19"   x2="12" y2="22"/>
+        <line x1="4.22" y1="4.22"   x2="6.34" y2="6.34"/>
+        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+        <line x1="2"  y1="12"  x2="5"  y2="12"/>
+        <line x1="19" y1="12"  x2="22" y2="12"/>
+        <line x1="4.22" y1="19.78"  x2="6.34" y2="17.66"/>
+        <line x1="17.66" y1="6.34"  x2="19.78" y2="4.22"/>
+      </svg>
+      <!-- moon: visible in light mode -->
+      <svg class="icon-moon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ── Page content ─────────────────────────────────────────────── -->
+<div data-barba="wrapper">
+  <main data-barba="container" data-barba-namespace={namespace}>
+    <slot />
+  </main>
+</div>
+
+<!-- ── Footer ───────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div>© 2026 Abel Teame · all rights, mostly</div>
+  <div class="socials">
+    <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="tappable">github</a>
+    <a href="https://linkedin.com/in/abelteame" target="_blank" rel="noopener" class="tappable">linkedin</a>
+    <a href="mailto:abelteame22@gmail.com" class="tappable">email</a>
+  </div>
+  <div class="colophon">
+    Set in Bricolage Grotesque &amp; JetBrains Mono · made with care
+  </div>
+</footer>
+
+<!-- ── Overlay title data (for Barba) ───────────────────────────── -->
+<script is:inline type="application/json" id="overlay-data">
+  {JSON.stringify(overlayTitles)}
+</script>
+
+<!-- ── Scripts ──────────────────────────────────────────────────── -->
+<script>
+  import '../scripts/main.ts';
+</script>
+<script is:inline>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+  }
+</script>
+
+</body>
+</html>

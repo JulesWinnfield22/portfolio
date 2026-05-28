@@ -1,0 +1,258 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const snippets = {
+  composable: `const { response, state, refetch, setSearch } = usePagination({
+  id: "vehicles",       // namespaces URL query params
+  url: "/api/vehicles",
+  limit: 20,
+  sortBy: "created_at",
+  sortDirection: "desc",
+  params: (state) => ({
+    status: statusFilter.value,
+    search: state.search,
+  }),
+  resetOn: [statusFilter], // resets to page 1 when filter changes
+});
+
+// response = ComputedRef<Vehicle[]>
+// state    = { page, limit, search, sorting }`,
+
+  urlSync: `// State automatically writes to URL:
+// /vehicles?vehicles_page=2&vehicles_limit=20&vehicles_q=addis
+
+// Custom params get namespaced too:
+// /vehicles?vehicles__status=active
+
+// On mount, state is restored from URL — the user lands
+// exactly where they left off after a refresh or share.`,
+
+  columns: `const columns: TableColumn<Vehicle>[] = [
+  {
+    key: "plate",
+    label: "Plate Number",
+    field: "plate_number",  // string key
+    sortable: true,
+    sort_key: "plate_number",
+  },
+  {
+    key: "driver",
+    label: "Driver",
+    field: (row) => row.driver.first_name + " " + row.driver.last_name, // function
+  },
+  {
+    key: "status",
+    label: "Status",
+    cellAlign: "center",
+  },
+];`,
+
+  slots: `<Table :columns="columns" :data="response">
+  <template #cell-status="{ row }">
+    <span :class="['badge', 'badge--' + row.status]">
+      {{ row.status }}
+    </span>
+  </template>
+
+  <template #cell-actions="{ row }">
+    <button @click="openDetail(row.id)">View</button>
+  </template>
+</Table>`,
+
+  parser: `function parseResponse<T>(data: any): T[] {
+  if (Array.isArray(data)) return data;
+
+  const keys = [
+    "data", "result", "items", "results",
+    "docs", "documents", "shipments", "vehicles"
+  ];
+
+  for (const key of keys) {
+    if (Array.isArray(data?.[key])) return data[key];
+  }
+
+  return [];
+}`,
+
+  mobile: `// Column config for the mobile card layout:
+{
+  key: "plate",
+  label: "Plate",
+  on_sm_screen_column_span: 2,          // 2 of 3 grid columns
+  on_sm_screen_row_alignment: "start",  // aligns to top of card
+}
+
+// One column can be pinned to the top-right corner of the card:
+{
+  key: "status",
+  top_right: true,
+}`,
+
+  full: `<script setup lang="ts">
+const { response, state, setSearch, refetch } = usePagination({
+  id: "drivers",
+  url: "/api/drivers",
+  sortBy: "created_at",
+  sortDirection: "desc",
+});
+
+const columns: TableColumn<Driver>[] = [
+  { key: "name",   label: "Name",  field: "full_name",    sortable: true },
+  { key: "phone",  label: "Phone", field: "phone_number" },
+  { key: "status", label: "Status", cellAlign: "center" },
+];
+</script>
+
+<template>
+  <Table
+    :columns="columns"
+    :data="response"
+    :state="state"
+    @search="setSearch"
+    @refetch="refetch"
+  >
+    <template #cell-status="{ row }">
+      <StatusBadge :status="row.status" />
+    </template>
+  </Table>
+</template>`,
+};
+---
+
+<Layout title="How I Build Tables · Abel Teame" namespace="words">
+
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <a href="/words" class="tappable">Words</a>
+      <span class="sep">/</span>
+      <span class="here">Tables</span>
+    </div>
+    <h1>How I build data tables <span class="italic">that don't suck.</span></h1>
+    <div class="ph-meta">
+      <div class="article-meta">
+        <span>May 2026</span>
+        <span>·</span>
+        <span>7 min read</span>
+        <span>·</span>
+        <span>Vue.js · TanStack Table · TypeScript</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section wrap">
+    <div class="prose" data-reveal>
+
+      <p>
+        A data table sounds simple: fetch some rows, render them. Then product
+        adds sorting. Then search. Then pagination. Then filters. Then the mobile
+        designer asks for a card layout. Then someone wants the current filters
+        to survive a page refresh. By that point your "simple table" is a
+        400-line component held together by <code>watch</code> calls and optimism.
+      </p>
+
+      <p>
+        Here's the architecture I use that keeps all of that manageable — built
+        on <strong>TanStack Vue Table</strong> and a composable I call
+        <code>usePagination</code>.
+      </p>
+
+      <h2>usePagination — the data layer</h2>
+
+      <p>
+        The composable owns everything: fetching, pagination state, sorting,
+        search, and URL sync. The table component just renders what it gives back.
+        No data logic leaks into the template.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.composable}></code></pre>
+
+      <p>
+        <code>response</code> is a computed array of your data.
+        <code>state</code> has the current page, limit, search, and sorting.
+        That's all the table needs to know.
+      </p>
+
+      <h2>URL state sync</h2>
+
+      <p>
+        This is the part most table implementations skip, and the one
+        users notice most. Every state change — page, search, sort, filters —
+        writes to the URL as query params. The <code>id</code> prefix namespaces
+        them so multiple tables on the same page don't collide.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.urlSync}></code></pre>
+
+      <p>
+        This takes ten minutes to add and makes the app feel polished in a way
+        people can't quite name — they just know it works how they expect.
+      </p>
+
+      <h2>Column definitions</h2>
+
+      <p>
+        Columns are plain objects. The <code>field</code> prop accepts either
+        a string key or a function — simple cases stay simple, computed values
+        don't need a separate computed property just to format a full name.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.columns}></code></pre>
+
+      <h2>Custom cell rendering</h2>
+
+      <p>
+        For cells that need more than text — status badges, action buttons,
+        formatted dates — I use named slots keyed by column <code>id</code>.
+        No render props, no column-level render functions. Just slots.
+        Vue is good at slots. I use them.
+      </p>
+
+      <pre data-lang="vue"><code set:text={snippets.slots}></code></pre>
+
+      <h2>The flexible response parser</h2>
+
+      <p>
+        Different APIs return arrays under different keys. Rather than normalize
+        every endpoint or write a custom parser per table, I handle it once
+        inside <code>usePagination</code>. Pragmatic? Yes. Perfect? No. Does it
+        mean I've never had to ask a backend engineer to change their response
+        shape just to fit my table? Also yes.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.parser}></code></pre>
+
+      <h2>Mobile: the card layout</h2>
+
+      <p>
+        On small screens the table switches to a card grid automatically.
+        Each column can specify its small-screen span and alignment
+        independently of the desktop layout. One column can be pinned to the
+        top-right corner of each card — useful for status badges.
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.mobile}></code></pre>
+
+      <h2>Wiring it all together</h2>
+
+      <p>
+        A full page with search, sorting, pagination, URL sync, and a custom
+        status cell ends up looking like this. The page component describes
+        <em>what</em> to show — not <em>how</em> to manage it. That's the goal.
+      </p>
+
+      <pre data-lang="vue"><code set:text={snippets.full}></code></pre>
+
+      <h2>What I'd do differently</h2>
+
+      <p>
+        The response parser is a hack and I know it. The right solution is a
+        typed API client that returns consistent shapes. I keep meaning to
+        build one. I keep shipping features instead. Classic.
+      </p>
+
+    </div>
+  </section>
+
+</Layout>

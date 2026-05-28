@@ -1,0 +1,435 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const budgetOptions = [
+  { label: '< $10k',   value: 'lt10k'    },
+  { label: '$10–25k',  value: '10-25k'   },
+  { label: '$25–50k',  value: '25-50k'   },
+  { label: '$50k+',    value: '50k-plus' },
+  { label: 'Not sure', value: 'not-sure' },
+];
+---
+
+<Layout title="Contact · Abel Teame" namespace="contact">
+
+  <section class="contact wrap">
+
+    <!-- 1 · Section anchor -->
+    <div class="section-anchor">/ 07 contact</div>
+
+    <!-- 2 · Mega headline -->
+    <h2 data-reveal>
+      <span class="line">Let's</span>
+      <span class="line">build <span class="italic">something —</span></span>
+      <span class="line">honestly, just</span>
+      <span class="line"><span class="italic">email me.</span></span>
+    </h2>
+
+    <!-- 3 · Contact-CTA row -->
+    <div class="contact-cta" data-reveal>
+      <a class="contact-email tappable" href="mailto:abelteame22@gmail.com">
+        abelteame22@gmail.com
+        <span class="arrow">
+          <svg width="18" height="18" viewBox="0 0 14 14" fill="none">
+            <path d="M3 11L11 3M11 3H4M11 3V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </a>
+      <div class="contact-meta">
+        <b>I reply as soon as possible.</b>
+        Or find me on<br>
+        <a href="#" class="tappable">x</a> ·
+        <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="tappable">github</a> ·
+        <a href="https://linkedin.com/in/abelteame" target="_blank" rel="noopener" class="tappable">linkedin</a> ·
+        <a href="#" class="tappable">read.cv</a>
+      </div>
+    </div>
+
+    <!-- 4 · Form area -->
+    <div class="contact-form-wrap" data-reveal>
+
+      <!-- 4a · Intro column -->
+      <div class="cf-intro">
+        <div class="cf-intro-label">/ or — write a proper note</div>
+        <h3>Tell me what you're <span class="italic">building.</span></h3>
+        <p>A few sentences is plenty. The more you share now, the faster I can come back with something useful.</p>
+      </div>
+
+      <!-- 4b · Form column -->
+      <div class="cf-form-col">
+
+        <form class="cf-grid" id="cf"
+              action="https://formspree.io/f/YOUR_FORM_ID"
+              method="POST" novalidate>
+
+          <!-- Honeypot — bots fill it, humans don't -->
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"
+                 style="position:absolute;left:-9999px;opacity:0;pointer-events:none;width:0;height:0">
+
+          <!-- 01 · Name -->
+          <div class="field field-left" id="field-name">
+            <div class="field-top">
+              <label class="field-label" for="cf-name">
+                <span class="num">01</span> · Your name
+              </label>
+              <span class="field-hint">required</span>
+            </div>
+            <input class="field-input" id="cf-name" name="name" type="text"
+                   placeholder="e.g. Jane Doe" autocomplete="name">
+            <span class="field-error" aria-live="polite">Please add your name.</span>
+          </div>
+
+          <!-- 02 · Email -->
+          <div class="field field-right" id="field-email">
+            <div class="field-top">
+              <label class="field-label" for="cf-email">
+                <span class="num">02</span> · Email
+              </label>
+              <span class="field-hint">required</span>
+            </div>
+            <input class="field-input" id="cf-email" name="email" type="email"
+                   placeholder="you@where.com" autocomplete="email">
+            <span class="field-error" aria-live="polite">That doesn't look like an email.</span>
+          </div>
+
+          <!-- 03 · Topic — custom dropdown -->
+          <div class="field field-left cdd" id="cdd">
+            <div class="field-top">
+              <span class="field-label" id="cdd-label">
+                <span class="num">03</span> · What's this about?
+              </span>
+              <span class="field-hint">optional</span>
+            </div>
+            <input type="hidden" name="topic" id="cdd-hidden">
+            <button
+              type="button"
+              class="cdd-btn is-placeholder"
+              id="cdd-btn"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-labelledby="cdd-label"
+            >
+              <span class="cdd-val" id="cdd-val">Pick one (or skip)…</span>
+              <span class="cdd-chev" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M2.5 5L7 9.5L11.5 5" stroke="currentColor"
+                        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </button>
+            <div class="cdd-panel" id="cdd-panel" role="listbox"
+                 aria-labelledby="cdd-label" hidden></div>
+          </div>
+
+          <!-- 04 · Budget — radio chips -->
+          <div class="field field-right" id="field-budget">
+            <div class="field-top">
+              <span class="field-label">
+                <span class="num">04</span> · Rough budget
+              </span>
+              <span class="field-hint">optional</span>
+            </div>
+            <div class="budget-chips" role="group" aria-label="Budget range">
+              {budgetOptions.map(({ label, value }) => (
+                <label class="chip-label tappable">
+                  <input type="radio" name="budget" value={value}
+                         style="position:absolute;opacity:0;width:1px;height:1px;">
+                  {label}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <!-- 05 · Message -->
+          <div class="field field-full" id="field-msg">
+            <div class="field-top">
+              <label class="field-label" for="cf-msg">
+                <span class="num">05</span> · The pitch
+              </label>
+              <span class="field-hint">required · ≥ 20 chars</span>
+            </div>
+            <textarea class="field-input" id="cf-msg" name="message" rows="4"
+                      placeholder="What are you building, who is it for, when do you need it?"></textarea>
+            <span class="field-error" aria-live="polite">A sentence or two so I have something to go on.</span>
+          </div>
+
+          <!-- Form footer -->
+          <div class="form-foot">
+            <p class="form-foot-meta">
+              By submitting you agree I'll reply to you<br>
+              and nothing else — no list, no follow-ups.
+            </p>
+            <button type="submit" class="submit-btn tappable" id="submit-btn" data-state="idle">
+              <span class="btn-spinner" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"
+                          stroke-dasharray="28" stroke-dashoffset="10" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="btn-label">Send it over</span>
+              <span class="btn-arrow" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M3 11L11 3M11 3H4M11 3V10" stroke="currentColor"
+                        stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </button>
+          </div>
+
+        </form>
+
+        <!-- Success banner -->
+        <div class="form-status" id="formSuccess" role="status">
+          <div class="ph">
+            <span class="status-dot" aria-hidden="true"></span>
+            MESSAGE SENT · <span id="confNum">#0000</span>
+          </div>
+          <h4>Got it — <span class="italic">thanks for writing.</span></h4>
+          <p>I'll get back to you <span class="italic">as soon as possible</span> — usually within a day. If it's urgent, abelteame22@gmail.com is the same inbox and reads pretty fast.</p>
+        </div>
+
+        <!-- Error banner -->
+        <div class="form-status is-err" id="formError" role="alert">
+          <div class="ph">
+            <span class="status-dot" aria-hidden="true"></span>
+            SOMETHING WENT WRONG
+          </div>
+          <h4>Couldn't send <span class="italic">just then.</span></h4>
+          <p>The form didn't make it through. Email me directly at <b>abelteame22@gmail.com</b> — same destination, no robots involved.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+</Layout>
+
+<script>
+// ── DROPDOWN ─────────────────────────────────────────────────────────
+const CDD_OPTIONS = [
+  { ix: 'a.', html: 'A new project — <span class="italic">full build</span>',    value: 'A new project — full build'    },
+  { ix: 'b.', html: 'A prototyping <span class="italic">sprint</span> · 2 wks', value: 'A prototyping sprint · 2 wks'  },
+  { ix: 'c.', html: 'Backend / infra <span class="italic">rescue</span>',        value: 'Backend / infra rescue'        },
+  { ix: 'd.', html: 'Technical <span class="italic">advisory</span> / retainer', value: 'Technical advisory / retainer' },
+  { ix: 'e.', html: '<span class="italic">Something</span> else',                value: 'Something else'                },
+];
+
+const cdd     = document.getElementById('cdd')       as HTMLElement;
+const btn     = document.getElementById('cdd-btn')   as HTMLButtonElement;
+const valEl   = document.getElementById('cdd-val')   as HTMLElement;
+const panel   = document.getElementById('cdd-panel') as HTMLElement;
+const hiddenI = document.getElementById('cdd-hidden') as HTMLInputElement;
+
+CDD_OPTIONS.forEach((opt, i) => {
+  const row = document.createElement('div');
+  row.className = 'cdd-opt';
+  row.setAttribute('role', 'option');
+  row.setAttribute('aria-selected', 'false');
+  row.dataset.value = opt.value;
+  row.dataset.index = String(i);
+  row.innerHTML = `
+    <span class="ix">${opt.ix}</span>
+    <span class="lbl">${opt.html}</span>
+    <span class="tick" aria-hidden="true">
+      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+        <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>`;
+  panel.appendChild(row);
+});
+
+let selectedIdx = -1;
+let activeIdx   = -1;
+
+function getOpts(): HTMLElement[] {
+  return Array.from(panel.querySelectorAll<HTMLElement>('.cdd-opt'));
+}
+
+function setActive(i: number) {
+  activeIdx = i;
+  getOpts().forEach((o, j) => o.classList.toggle('is-active', j === i));
+}
+
+function openPanel() {
+  cdd.classList.add('is-open');
+  btn.setAttribute('aria-expanded', 'true');
+  panel.hidden = false;
+  panel.classList.add('is-entering');
+
+  const opts = getOpts();
+  opts.forEach(o => {
+    o.style.transition = 'none';
+    o.style.opacity    = '0';
+    o.style.transform  = 'translateY(8px)';
+  });
+  void panel.offsetHeight; // force reflow
+  opts.forEach((o, i) => {
+    setTimeout(() => {
+      o.style.transition = 'opacity 350ms ease, transform 350ms ease';
+      o.style.opacity    = '1';
+      o.style.transform  = 'translateY(0)';
+    }, i * 40);
+  });
+  setActive(selectedIdx >= 0 ? selectedIdx : 0);
+}
+
+function closePanel() {
+  cdd.classList.remove('is-open');
+  btn.setAttribute('aria-expanded', 'false');
+  panel.hidden = true;
+  panel.classList.remove('is-entering');
+  setActive(-1);
+}
+
+function selectOpt(i: number) {
+  const opts = getOpts();
+  if (i < 0 || i >= opts.length) return;
+  selectedIdx     = i;
+  hiddenI.value   = opts[i].dataset.value ?? '';
+  valEl.innerHTML = opts[i].querySelector('.lbl')!.innerHTML;
+  btn.classList.remove('is-placeholder');
+  opts.forEach((o, j) => {
+    const sel = j === i;
+    o.classList.toggle('is-selected', sel);
+    o.setAttribute('aria-selected', String(sel));
+  });
+  closePanel();
+  btn.focus();
+}
+
+btn.addEventListener('click', () =>
+  cdd.classList.contains('is-open') ? closePanel() : openPanel()
+);
+
+btn.addEventListener('keydown', e => {
+  const isOpen = cdd.classList.contains('is-open');
+  const opts   = getOpts();
+  if (!isOpen) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); openPanel(); }
+    return;
+  }
+  switch (e.key) {
+    case 'ArrowDown': e.preventDefault(); setActive(Math.min(activeIdx + 1, opts.length - 1)); break;
+    case 'ArrowUp':   e.preventDefault(); setActive(Math.max(activeIdx - 1, 0));               break;
+    case 'Enter':
+    case ' ':         e.preventDefault(); if (activeIdx >= 0) selectOpt(activeIdx);            break;
+    case 'Escape':    e.preventDefault(); closePanel();                                         break;
+  }
+});
+
+panel.addEventListener('click', e => {
+  const opt = (e.target as Element).closest<HTMLElement>('.cdd-opt');
+  if (opt) selectOpt(parseInt(opt.dataset.index ?? '0', 10));
+});
+panel.addEventListener('mouseover', e => {
+  const opt = (e.target as Element).closest<HTMLElement>('.cdd-opt');
+  if (opt) setActive(parseInt(opt.dataset.index ?? '0', 10));
+});
+
+btn.addEventListener('focus', () => cdd.classList.add('is-focused'));
+btn.addEventListener('blur',  () => {
+  setTimeout(() => {
+    if (!cdd.contains(document.activeElement)) cdd.classList.remove('is-focused');
+  }, 150);
+});
+
+document.addEventListener('click', e => {
+  if (!cdd.contains(e.target as Node) && cdd.classList.contains('is-open')) closePanel();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && cdd.classList.contains('is-open')) { closePanel(); btn.focus(); }
+});
+
+// ── VALIDATION ────────────────────────────────────────────────────────
+const FIELDS = {
+  name:  { input: document.getElementById('cf-name')  as HTMLInputElement,    wrap: document.getElementById('field-name')!  },
+  email: { input: document.getElementById('cf-email') as HTMLInputElement,    wrap: document.getElementById('field-email')! },
+  msg:   { input: document.getElementById('cf-msg')   as HTMLTextAreaElement, wrap: document.getElementById('field-msg')!  },
+};
+
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Clear error as soon as user types again in an errored field
+Object.values(FIELDS).forEach(({ input, wrap }) => {
+  input.addEventListener('input', () => wrap.classList.remove('is-error'));
+});
+
+// ── SUBMISSION ────────────────────────────────────────────────────────
+const form        = document.getElementById('cf')          as HTMLFormElement;
+const submitBtn   = document.getElementById('submit-btn')  as HTMLButtonElement;
+const formSuccess = document.getElementById('formSuccess') as HTMLElement;
+const formError   = document.getElementById('formError')   as HTMLElement;
+const honeypot    = form.querySelector<HTMLInputElement>('[name="_gotcha"]')!;
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+
+  // Reset banners
+  formSuccess.classList.remove('is-shown');
+  formError.classList.remove('is-shown');
+
+  // Validate required fields
+  const name  = FIELDS.name.input.value.trim();
+  const email = FIELDS.email.input.value.trim();
+  const msg   = FIELDS.msg.input.value.trim();
+
+  const errors: (keyof typeof FIELDS)[] = [];
+  if (!name)                errors.push('name');
+  if (!emailRe.test(email)) errors.push('email');
+  if (msg.length < 20)      errors.push('msg');
+
+  if (errors.length) {
+    errors.forEach(k => FIELDS[k].wrap.classList.add('is-error'));
+    FIELDS[errors[0]].input.focus();
+    return;
+  }
+
+  // Sending state
+  submitBtn.dataset.state = 'sending';
+  submitBtn.disabled      = true;
+
+  const isSpam         = honeypot.value.length > 0;
+  const isUnconfigured = form.action.includes('YOUR_FORM_ID');
+
+  try {
+    if (isSpam || isUnconfigured) {
+      // Dev preview: simulate round-trip then show success
+      await new Promise(r => setTimeout(r, 900));
+      showSuccess();
+    } else {
+      const res = await fetch(form.action, {
+        method:  'POST',
+        body:    new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      res.ok ? showSuccess() : showError();
+    }
+  } catch {
+    showError();
+  } finally {
+    submitBtn.dataset.state = 'idle';
+    submitBtn.disabled      = false;
+  }
+});
+
+function showSuccess() {
+  // Hide all fields + form-foot
+  form.querySelectorAll<HTMLElement>('.field, .form-foot')
+      .forEach(el => (el.style.display = 'none'));
+
+  // Random 4-digit confirmation number
+  const num = Math.floor(Math.random() * 9000) + 1000;
+  document.getElementById('confNum')!.textContent = `#${num}`;
+
+  formSuccess.classList.add('is-shown');
+  formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  form.reset();
+}
+
+function showError() {
+  formError.classList.add('is-shown');
+  formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+</script>

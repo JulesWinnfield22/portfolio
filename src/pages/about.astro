@@ -1,0 +1,273 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MiniContact from '../components/MiniContact.astro';
+---
+
+<Layout title="About · Abel Teame" namespace="about" preloads={[{ href: '/assets/portrait-opt.jpg', as: 'image' }]}>
+
+  <!-- ── PAGE HEADER ───────────────────────────────────────────── -->
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <span class="here">About</span>
+    </div>
+    <h1>Not a <span class="italic">typical</span> origin story.</h1>
+    <div class="ph-meta">
+      <p class="lede">
+        Software developer from Addis Ababa. I build web apps and platforms
+        across different domains — a lot of it has been in health, insurance, and logistics,
+        but I'm not domain-specific.
+        <span class="italic">If it's real work that real people use, I'm interested.</span>
+      </p>
+      <div class="meta-right">
+        <b>Abel Teame</b>Software Developer · Addis Ababa · UTC+3
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ABOUT ──────────────────────────────────────────────────── -->
+  <section class="section wrap">
+    <div class="section-anchor">/ 02 about</div>
+    <div class="about" data-reveal>
+      <div class="about-photo">
+        <div class="badge">→ the<br>person<br>behind it ←</div>
+      </div>
+      <div class="about-copy">
+        <h3>
+          I came to computers late, dropped out of college, and spent a good while
+          not being particularly good at anything.
+          <span class="italic">A friend suggested I try software. That was the whole turning point.</span>
+        </h3>
+        <p>
+          Before that, I was drifting. After that, I had something to show up for.
+          I don't think I'm naturally gifted — I just found the work that makes me feel
+          like I'm in the right place, and I've been building ever since.
+        </p>
+        <p>
+          Six years in, I've shipped insurance platforms, pharmacy systems, logistics
+          dashboards, component libraries, and a few things that don't fit a neat category.
+          A lot of it has been in high-stakes Ethiopian enterprise — but that's context,
+          not a constraint.
+          <span class="italic">I'll build whatever's worth building.</span>
+        </p>
+        <dl class="about-stack">
+          <dt>Stack</dt>
+          <dd>
+            <span class="chip">Vue.js</span>
+            <span class="chip">React</span>
+            <span class="chip">TypeScript</span>
+            <span class="chip">Node.js</span>
+            <span class="chip">Elixir</span>
+            <span class="chip">Kotlin</span>
+            <span class="chip">MySQL</span>
+            <span class="chip">PostgreSQL</span>
+            <span class="chip">etc.</span>
+          </dd>
+          <dt>I care about</dt>
+          <dd>
+            <span class="chip">Systems that hold up</span>
+            <span class="chip">Teaching what I know</span>
+            <span class="chip">Finishing things</span>
+          </dd>
+          <dt>I'm tired of</dt>
+          <dd>
+            <span class="chip">AI fear mongering</span>
+            <span class="chip">A new JS package every week (I'm part of the problem 😅)</span>
+          </dd>
+        </dl>
+
+        <div class="about-cv">
+          <a href="/abel_teame_cv.pdf" download class="about-cv-link tappable">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Download CV
+          </a>
+          <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="about-cv-link tappable">
+            <svg width="14" height="14" viewBox="0 0 98 96" fill="currentColor" aria-hidden="true">
+              <path d="M49 0C22 0 0 22 0 49c0 21.6 14 40 33.4 46.5 2.4.5 3.3-1 3.3-2.3v-8c-13.6 3-16.5-6.5-16.5-6.5-2.2-5.7-5.4-7.2-5.4-7.2-4.4-3 .3-3 .3-3 4.9.4 7.5 5 7.5 5 4.4 7.5 11.5 5.3 14.3 4 .4-3.2 1.7-5.3 3.1-6.5-10.8-1.2-22.2-5.4-22.2-24.2 0-5.4 1.9-9.7 5-13.2-.5-1.2-2.2-6.2.5-13 0 0 4.1-1.3 13.4 5 3.9-1.1 8-1.6 12.2-1.6 4.1 0 8.3.5 12.2 1.6 9.3-6.3 13.4-5 13.4-5 2.7 6.8 1 11.8.5 13 3.1 3.4 5 7.8 5 13.2 0 18.8-11.4 23-22.3 24.2 1.7 1.5 3.3 4.5 3.3 9v13.3c0 1.3.9 2.8 3.4 2.3C84 89 98 70.6 98 49 98 22 76 0 49 0z"/>
+            </svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SERVICES ───────────────────────────────────────────────── -->
+  <section class="section wrap">
+    <div class="section-anchor">/ 03 services · what I do</div>
+    <div class="meta" data-reveal>
+      <h2>Four things, <span style="font-family:var(--serif);font-style:italic;color:var(--accent)">done properly.</span></h2>
+      <div class="label">Pick one, or mix them</div>
+    </div>
+
+    <div class="services" data-reveal-stagger>
+      <div class="service">
+        <span class="n">A.</span>
+        <h4>Frontend apps <span class="italic">— Vue or React</span></h4>
+        <p>Dynamic, responsive UIs that actually perform. Component-driven from the start, so the codebase doesn't become a haunted house six months later.</p>
+        <div class="deliv-wrap">
+          <div class="deliv">
+            <span class="chip">Vue.js</span>
+            <span class="chip">React</span>
+            <span class="chip">TypeScript</span>
+            <span class="chip">TanStack</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service">
+        <span class="n">B.</span>
+        <h4>Component libraries <span class="italic">&amp; design systems</span></h4>
+        <p>Custom, reusable component systems — tables, forms, modals — built for your exact use case, not for the npm average. Published one. Built several more that didn't ship to npm but should have.</p>
+        <div class="deliv-wrap">
+          <div class="deliv">
+            <span class="chip">design tokens</span>
+            <span class="chip">headless UI</span>
+            <span class="chip">form validation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service">
+        <span class="n">C.</span>
+        <h4>Healthcare &amp; <span class="italic">fintech UI</span></h4>
+        <p>Complex domain, high stakes, zero room for confusing UX. I've built for hospitals and insurance companies — the kind of software where a confusing modal is actually a problem.</p>
+        <div class="deliv-wrap">
+          <div class="deliv">
+            <span class="chip">pharmacy systems</span>
+            <span class="chip">insurance platforms</span>
+            <span class="chip">claims UI</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service">
+        <span class="n">D.</span>
+        <h4>Technical <span class="italic">leadership</span></h4>
+        <p>Code reviews, architecture decisions, onboarding new devs. I've led frontend teams and lived to tell the tale. I'll speak up when something is heading the wrong direction — before it becomes a problem, not after.</p>
+        <div class="deliv-wrap">
+          <div class="deliv">
+            <span class="chip">code review</span>
+            <span class="chip">mentoring</span>
+            <span class="chip">async-friendly</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROCESS ────────────────────────────────────────────────── -->
+  <section class="section wrap">
+    <div class="section-anchor">/ 04 process · how we'd work</div>
+    <div class="meta" data-reveal>
+      <h2>Four steps, <span style="font-family:var(--serif);font-style:italic;color:var(--accent)">no surprises.</span></h2>
+      <div class="label">~ 4 to 10 weeks</div>
+    </div>
+
+    <div class="process-grid" data-reveal-stagger>
+      <div class="process-step">
+        <div class="top">
+          <span class="n">01 / Understand</span>
+          <span class="dur">~ Week 0</span>
+        </div>
+        <div>
+          <h4>Listen <span class="italic">first.</span></h4>
+          <p>30-minute call. I ask too many questions. You walk away with a written summary of what we agreed on, either way.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="top">
+          <span class="n">02 / Prototype</span>
+          <span class="dur">~ Week 1</span>
+        </div>
+        <div>
+          <h4>Something <span class="italic">clickable.</span></h4>
+          <p>No wireframes, no Figma decks. A real prototype — you interact with it, you tell me what's wrong, we fix it.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="top">
+          <span class="n">03 / Build</span>
+          <span class="dur">~ Week 2 – 8</span>
+        </div>
+        <div>
+          <h4>Ship <span class="italic">in slices.</span></h4>
+          <p>Weekly check-ins. Always deployable. You always know what's done and what's next — no black-hole sprints.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="top">
+          <span class="n">04 / Handoff</span>
+          <span class="dur">~ Final week</span>
+        </div>
+        <div>
+          <h4>Hand it <span class="italic">over.</span></h4>
+          <p>Docs, walkthrough, two weeks async support. Then I get out of your way — the goal is that you never need me to explain your own codebase.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ───────────────────────────────────────────── -->
+  <section class="section wrap">
+    <div class="section-anchor">/ 05 words</div>
+    <div class="meta" data-reveal>
+      <h2>What people have <span style="font-family:var(--serif);font-style:italic;color:var(--accent)">actually said.</span></h2>
+      <div class="label">Placeholder — real ones incoming</div>
+    </div>
+
+    <div class="quotes" data-reveal-stagger>
+      <div class="quote">
+        <span class="mark">"</span>
+        <p>Abel shipped in two weeks what our team had been arguing about for two quarters. He has the rare talent of <span class="italic">making complicated things look obvious.</span></p>
+        <div class="who">
+          <div class="avatar"></div>
+          <div>
+            <b>Colleague · Medco</b>
+            <span>Frontend team</span>
+          </div>
+        </div>
+      </div>
+      <div class="quote">
+        <span class="mark">"</span>
+        <p>His components are so clean it's almost annoying. The kind of code you're embarrassed to touch because it'll make your part look bad.</p>
+        <div class="who">
+          <div class="avatar" style="background:radial-gradient(circle at 60% 30%, #ffd400, transparent 60%), var(--bg-3)"></div>
+          <div>
+            <b>Dev · Kulfinet</b>
+            <span>Engineering team</span>
+          </div>
+        </div>
+      </div>
+      <div class="quote">
+        <span class="mark">"</span>
+        <p>Not just a contractor — a <span class="italic">thought partner.</span> He pushed back when we were wrong, which saved us at least a quarter of bad architecture.</p>
+        <div class="who">
+          <div class="avatar" style="background:radial-gradient(circle at 30% 70%, #3fd07a, transparent 60%), var(--bg-3)"></div>
+          <div>
+            <b>TBD</b>
+            <span>Real quote coming soon</span>
+          </div>
+        </div>
+      </div>
+      <div class="quote">
+        <span class="mark">"</span>
+        <p>Mentored our entire junior team and still shipped his own tickets on time. Still not sure how he managed that.</p>
+        <div class="who">
+          <div class="avatar" style="background:radial-gradient(circle at 70% 60%, #6aa6ff, transparent 60%), var(--bg-3)"></div>
+          <div>
+            <b>TBD</b>
+            <span>Real quote coming soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MINI CONTACT ───────────────────────────────────────────── -->
+  <MiniContact label="/ work together" heading="Like the look of it?" italic="Say hi." cta="Start a conversation" />
+
+</Layout>

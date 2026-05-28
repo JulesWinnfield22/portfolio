@@ -1,0 +1,21 @@
+{
+  "name": "abel-teame-portfolio",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^4.16.0",
+    "gsap": "^3.12.5",
+    "@studio-freight/lenis": "^1.0.42",
+    "@barba/core": "^2.10.3"
+  },
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

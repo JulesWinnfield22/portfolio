@@ -1,0 +1,324 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const snippets = {
+  problem: `<!-- The standard approach. Every page. Every project. -->
+<template>
+  <div v-if="showUserForm" class="modal-backdrop">
+    <UserForm
+      :user="selectedUser"
+      @save="handleSave"
+      @close="showUserForm = false"
+    />
+  </div>
+
+  <div v-if="showConfirm" class="modal-backdrop">
+    <Confirmation
+      @confirm="handleConfirm"
+      @cancel="showConfirm = false"
+    />
+  </div>
+</template>
+
+<script setup>
+const showUserForm = ref(false);
+const showConfirm  = ref(false);
+const selectedUser = ref(null);
+
+const handleSave    = (result) => { /* ... */ };
+const handleConfirm = ()       => { /* ... */ };
+</script>`,
+
+  solution: `<!-- With Modal-X -->
+<script setup>
+import { openModal } from '@customizer/modal-x';
+
+async function editUser(user) {
+  const result = await openModal('UserForm', { user });
+  if (result?.saved) refresh();
+}
+</script>`,
+
+  setup: `// main.js
+import modal from '@customizer/modal-x';
+
+const app = createApp(App);
+app.use(modal); // mounts a root container once, globally
+app.mount('#app');`,
+
+  viteConfig: `// vite.config.js
+import { modalTypesPlugin } from '@customizer/modal-x/modalxPlugin.cjs';
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    modalTypesPlugin({ autoInference: true }),
+  ],
+});`,
+
+  fileStructure: `src/modals/
+  UserForm.mdl.vue          // eager-loaded modal
+  Confirmation.mdl.vue      // eager-loaded modal
+  AddDriver.amdl.vue        // lazy-loaded (code-split)
+  AddDriver.s.vue           // spinner shown while AddDriver loads
+  GlobalSpinner.g.vue       // fallback spinner for any lazy modal`,
+
+  defineModal: `<!-- src/modals/UserForm.mdl.vue -->
+<script setup lang="ts">
+export type Props      = { userId: string; name: string };
+export type ReturnType = { saved: boolean; newName: string };
+
+// Plugin auto-generates this line from your exported types:
+// [MODAL-X] AUTO-GENERATED INSTANCE
+defineProps<{ data: Props; close: (res: ReturnType) => void }>();
+</script>
+
+<template>
+  <form @submit.prevent="close({ saved: true, newName: form.name })">
+    <input v-model="form.name" />
+    <button type="submit">Save</button>
+    <button type="button" @click="close({ saved: false, newName: data.name })">
+      Cancel
+    </button>
+  </form>
+</template>`,
+
+  typeSafe: `import { openModal, MODALS } from '@customizer/modal-x';
+
+// TypeScript knows exactly what data UserForm expects
+// and what it returns — no guessing, no any
+const result = await openModal(MODALS.UserForm, {
+  userId: '123',   // required, string — TS validates this
+  name: 'Abel',    // required, string
+});
+
+// result is typed as: { saved: boolean; newName: string }
+if (result?.saved) {
+  console.log(result.newName); // autocomplete works here
+}`,
+
+  confirmation: `// A real pattern I use constantly
+async function deleteVehicle(id: string) {
+  const confirmed = await openModal('Confirmation', {
+    title:   'Delete vehicle?',
+    message: 'This cannot be undone.',
+  });
+
+  if (confirmed) await api.delete('/vehicles/' + id);
+}`,
+
+  stack: `// Modals stack — each openModal call pushes on top
+await openModal('VehicleList');
+// user clicks a vehicle row, which calls:
+await openModal('VehicleDetail', { vehicleId: id });
+// user clicks edit, which calls:
+await openModal('VehicleForm', { vehicleId: id });
+
+// Closing VehicleForm drops back to VehicleDetail
+// Closing VehicleDetail drops back to VehicleList
+// Z-index and active state are managed automatically`,
+
+  autoInference: `// You write this:
+export type Props      = { title: string };
+export type ReturnType = boolean;
+
+// The Vite plugin watches your file and injects:
+// [MODAL-X] AUTO-GENERATED INSTANCE
+defineProps<{ data: Props; close: (res: ReturnType) => void }>();
+
+// It updates the injected block automatically whenever
+// you change Props or ReturnType. No manual sync needed.`,
+};
+---
+
+<Layout title="Modal-X · Abel Teame" namespace="words">
+
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <a href="/words" class="tappable">Words</a>
+      <span class="sep">/</span>
+      <span class="here">Modal-X</span>
+    </div>
+    <h1>Modal-X — modals <span class="italic">that don't make you angry.</span></h1>
+    <div class="ph-meta">
+      <div class="article-meta">
+        <span>May 2026</span>
+        <span>·</span>
+        <span>6 min read</span>
+        <span>·</span>
+        <span>Vue.js · React · npm</span>
+        <span>·</span>
+        <a href="https://www.npmjs.com/package/@customizer/modal-x?activeTab=readme" target="_blank" rel="noopener" style="color:var(--accent)">Vue →</a>
+        <span>·</span>
+        <a href="https://www.npmjs.com/package/@customizer/react-modal-x" target="_blank" rel="noopener" style="color:var(--accent)">React →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section wrap">
+    <div class="prose" data-reveal>
+
+      <p>
+        I built Modal-X because I got tired of writing the same modal boilerplate
+        in every project. It's published on npm. Real people use it.
+        Here's what it does and why I think the approach is better.
+      </p>
+
+      <h2>The problem with the standard approach</h2>
+
+      <p>
+        The typical Vue modal pattern looks like this — a boolean ref per modal,
+        a <code>v-if</code> in the template, event emitters for results,
+        and manual state cleanup on close:
+      </p>
+
+      <pre data-lang="vue"><code set:text={snippets.problem}></code></pre>
+
+      <p>
+        This works for one modal. Add five, and your component has five booleans,
+        five handlers, and a template full of conditionals. The modal logic is
+        scattered across the file — and if you want the result of one modal to
+        trigger another, you're wiring event handlers to event handlers.
+        It gets ugly fast.
+      </p>
+
+      <h2>The Modal-X approach: files and promises</h2>
+
+      <p>
+        Modal-X treats modals as <em>files</em>, not component state.
+        You put them in a <code>src/modals/</code> folder using a naming convention,
+        and the plugin discovers them automatically. Opening one returns a Promise —
+        so you can <code>await</code> the result like any async operation:
+      </p>
+
+      <pre data-lang="vue"><code set:text={snippets.solution}></code></pre>
+
+      <p>
+        No boolean. No event handler. No cleanup. The modal opens, the user
+        interacts, it resolves. Same mental model as <code>fetch()</code>.
+      </p>
+
+      <h2>Setup</h2>
+
+      <p>
+        Install the plugin once in <code>main.js</code> — it mounts a single
+        root container to the document body and initializes the global modal stack:
+      </p>
+
+      <pre data-lang="javascript"><code set:text={snippets.setup}></code></pre>
+
+      <p>
+        Add the Vite plugin for automatic type generation and the
+        <strong>auto-inference</strong> feature (more on that below):
+      </p>
+
+      <pre data-lang="javascript"><code set:text={snippets.viteConfig}></code></pre>
+
+      <h2>File conventions</h2>
+
+      <p>
+        The naming convention tells the system how each file should behave:
+      </p>
+
+      <pre data-lang="text"><code set:text={snippets.fileStructure}></code></pre>
+
+      <ul>
+        <li><code>.mdl.vue</code> — eager-loaded. Available immediately, no spinner needed</li>
+        <li><code>.amdl.vue</code> — lazy-loaded. Code-split, loaded on first open</li>
+        <li><code>.s.vue</code> — spinner shown while the async modal chunk loads</li>
+        <li><code>.g.vue</code> — global fallback spinner if no specific spinner is defined</li>
+      </ul>
+
+      <h2>Defining a modal</h2>
+
+      <p>
+        A modal component exports its <code>Props</code> and <code>ReturnType</code>
+        as TypeScript types. The plugin reads those exports and auto-generates
+        the <code>defineProps</code> block — you don't write it manually:
+      </p>
+
+      <pre data-lang="vue"><code set:text={snippets.defineModal}></code></pre>
+
+      <p>
+        Inside the modal, <code>data</code> holds the props you passed in,
+        and <code>close(result)</code> resolves the promise with whatever
+        you hand it. Clean in, clean out.
+      </p>
+
+      <h2>Type safety end-to-end</h2>
+
+      <p>
+        Because the plugin generates a registry from your exported types,
+        TypeScript knows exactly what each modal expects and what it returns —
+        at the call site, with full autocomplete:
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.typeSafe}></code></pre>
+
+      <p>
+        The <code>MODALS</code> constant gives you "go to definition" navigation
+        directly to the modal file. This is the part I'm actually proud of —
+        most modal libraries treat modals as stringly-typed strings.
+        Modal-X doesn't.
+      </p>
+
+      <h2>A real pattern: confirmation dialogs</h2>
+
+      <p>
+        Confirmation modals are the most repetitive thing in any CRUD app.
+        With Modal-X they become one-liners:
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.confirmation}></code></pre>
+
+      <h2>Modal stacking</h2>
+
+      <p>
+        Multiple open modals stack automatically. Each <code>openModal</code> call
+        pushes onto a global stack — the topmost modal is active, the ones below
+        are inert. Closing drops back to the previous one.
+        Z-index and active state are managed for you:
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.stack}></code></pre>
+
+      <p>
+        Focus trapping and body scroll locking are also built in.
+        The kind of a11y details that are easy to skip and annoying to add later.
+      </p>
+
+      <h2>Auto-inference: the Vite plugin magic</h2>
+
+      <p>
+        With <code>autoInference: true</code>, the Vite plugin watches your modal
+        files for changes to <code>Props</code> and <code>ReturnType</code>,
+        and automatically updates the <code>defineProps</code> block.
+        You define the types, the plugin keeps the component in sync:
+      </p>
+
+      <pre data-lang="typescript"><code set:text={snippets.autoInference}></code></pre>
+
+      <h2>Why I built it</h2>
+
+      <p>
+        Honestly? I was maintaining a codebase with 30+ modals, all using the
+        boolean ref pattern, and I kept introducing bugs when I forgot to reset
+        state on close. I wanted something where the happy path was also the
+        correct path — where you couldn't forget to clean up because there was
+        nothing to clean up. The promise resolves, the modal disappears, done.
+      </p>
+
+      <p>
+        The file-based convention came from wanting modals to be findable.
+        In a large codebase, a single <code>src/modals/</code> folder with
+        <code>.mdl.vue</code> files is easier to navigate than hunting for
+        modal components scattered across feature folders. Grep for <code>.mdl.vue</code>,
+        you find every modal in the project. Simple.
+      </p>
+
+    </div>
+  </section>
+
+</Layout>

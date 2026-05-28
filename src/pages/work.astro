@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WorkRow from '../components/WorkRow.astro';
+import MiniContact from '../components/MiniContact.astro';
+
+const projects = [
+  { num: '01', name: 'FETAP',     italic: 'insurance platform',  tags: ['Insurance','Vue.js','Live'],      year: '25', thumb: 'FETAP — foreign employment assurance', thumbMeta: 'Insurance · 2025',   href: 'https://niscofetap.com',                                            image: '/assets/fetap.jpg'              },
+  { num: '02', name: 'Kenema',    italic: 'pharmacy platform',   tags: ['Healthcare','Vue.js','Live'],     year: '24', thumb: 'Kenema — pharmacy enterprise',         thumbMeta: 'Healthcare · 2024',  href: 'https://rx.kenemapharmacy.com',                                     image: '/assets/kenema.jpg'             },
+  { num: '03', name: 'Chinetlink',italic: 'logistics platform',  tags: ['Next.js','Current','Live'],       year: '26', thumb: 'Chinetlink — logistics platform',       thumbMeta: 'Logistics · 2026',   href: 'https://chinetlink.et/',                                            video: '/assets/chinetlink.webm' },
+  { num: '04', name: 'Modal-X',   italic: 'npm package',         tags: ['OSS','Vue + React','Published'],  year: '23', thumb: 'Modal-X — Vue & React modals',          thumbMeta: 'Open Source · 2023', href: 'https://www.npmjs.com/package/@customizer/modal-x?activeTab=readme', video: '/assets/videos/modal-x.webm'    },
+];
+---
+
+<Layout title="Work · Abel Teame" namespace="work">
+
+  <!-- ── PAGE HEADER ───────────────────────────────────────────── -->
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <span class="here">Work</span>
+    </div>
+    <h1>Selected <span class="italic">work.</span></h1>
+    <div class="ph-meta">
+      <p class="lede">
+        Five projects from the last few years — picked for what they taught me.
+        <span class="italic">Hover for a peek.</span>
+      </p>
+      <div class="meta-right">
+        <b>2022 – 2025</b>04 selected · all in production
+      </div>
+    </div>
+  </header>
+
+  <!-- ── WORK LIST ──────────────────────────────────────────────── -->
+  <section class="section wrap">
+    <div class="section-anchor">/ 01 selected work · 2022 – 2025</div>
+    <div class="meta" data-reveal>
+      <h2>Four projects, <span style="font-family:var(--serif);font-style:italic;color:var(--accent)">all real, all live.</span></h2>
+      <div class="label">Hover to preview</div>
+    </div>
+
+    <div class="work-list" data-reveal-stagger>
+      {projects.map((p) => (
+        <WorkRow
+          num={p.num}
+          name={p.name}
+          italic={p.italic}
+          tags={p.tags}
+          year={p.year}
+          thumb={p.thumb}
+          thumbMeta={p.thumbMeta}
+          href={p.href}
+          video={p.video}
+          image={p.image}
+        />
+      ))}
+    </div>
+
+    <div class="work-cta" data-reveal>
+      <p class="left">
+        There's also a Vue form validation library, a PWA chat app, and
+        <span class="italic">at least one Joomla migration</span> I don't talk about.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── PROJECT NOTES ─────────────────────────────────────────── -->
+  <section class="section wrap">
+    <div class="section-anchor">/ 02 brief notes</div>
+    <div class="meta" data-reveal>
+      <h2>What each one <span style="font-family:var(--serif);font-style:italic;color:var(--accent)">actually was.</span></h2>
+    </div>
+
+    <div class="services" data-reveal-stagger>
+      <div class="service">
+        <span class="n">01.</span>
+        <h4>FETAP <span class="italic">— niscofetap.com</span></h4>
+        <p>Foreign Employment Term Assurance Platform for Nyala Insurance. The thing Ethiopian workers abroad use when they need insurance that follows them. Stakes: fairly high. Framework: Vue.</p>
+        <div class="deliv-wrap"><div class="deliv">
+          <span class="chip">Vue.js</span><span class="chip">Java Spring</span><span class="chip">MySQL</span>
+        </div></div>
+      </div>
+
+      <div class="service">
+        <span class="n">02.</span>
+        <h4>Kenema <span class="italic">— rx.kenemapharmacy.com</span></h4>
+        <p>Online platform for accessing medicines in Addis Ababa. Because sometimes you don't want to walk across town to find out a pharmacy is out of stock. Real inventory, real impact.</p>
+        <div class="deliv-wrap"><div class="deliv">
+          <span class="chip">Vue.js</span><span class="chip">Java Spring</span><span class="chip">MySQL</span>
+        </div></div>
+      </div>
+
+      <div class="service">
+        <span class="n">03.</span>
+        <h4>Chinetlink <span class="italic">— chinetlink.et</span></h4>
+        <p>Logistics platform currently in production. I'm building the app in Next.js — the thing behind the landing page. Still actively shipping, which means the pride and the panic are both very fresh.</p>
+        <div class="deliv-wrap"><div class="deliv">
+          <span class="chip">Next.js</span><span class="chip">Live</span><span class="chip">Current</span>
+        </div></div>
+      </div>
+
+      <div class="service">
+        <span class="n">04.</span>
+        <h4>Modal-X <span class="italic">— npm · @customizer/modal-X</span></h4>
+        <p>A Vue (and React) plugin for file-based modal management. Published to npm because the built-in dialog API is, diplomatically, not great. Real people use it. Both of them seem happy.</p>
+        <div class="deliv-wrap"><div class="deliv">
+          <a href="https://www.npmjs.com/package/@customizer/modal-x?activeTab=readme" target="_blank" rel="noopener" class="chip tappable">Vue version →</a>
+          <a href="https://www.npmjs.com/package/@customizer/react-modal-x" target="_blank" rel="noopener" class="chip tappable">React version →</a>
+        </div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── MINI CONTACT ───────────────────────────────────────────── -->
+  <MiniContact label="/ next up" heading="Got a project?" italic="Tell me about it." cta="Get in touch" />
+
+</Layout>

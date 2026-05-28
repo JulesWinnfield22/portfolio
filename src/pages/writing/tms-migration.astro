@@ -1,0 +1,317 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Migrating a 236K-line Vue 2 TMS to Vue 3 · Abel Teame" namespace="words">
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <a href="/words" class="tappable">Words</a>
+      <span class="sep">/</span>
+      <span class="here">TMS Migration</span>
+    </div>
+    <h1>
+      Migrating a 236K-line Vue 2 TMS to Vue 3 —
+      <span class="italic">what actually happened.</span>
+    </h1>
+    <div class="ph-meta">
+      <div class="article-meta">
+        <span>2026</span>
+        <span>·</span>
+        <span>9 min read</span>
+        <span>·</span>
+        <span>Vue.js · Migration · Lessons learned</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section wrap">
+    <div class="prose" data-reveal>
+
+      <p>
+        The deadline was two weeks. My internal estimate, before I'd looked at much of the
+        codebase, was one week. I was confident. I'd done migrations before, the tech was
+        familiar, and I figured speed would compensate for whatever I didn't know.
+      </p>
+
+      <p>
+        The full migration took four weeks. Not two, not one — four. I hit the initial
+        deadline, but what I delivered at week two was a migration with gaps: edge cases
+        I'd skipped, features I'd moved past because time was running out, things I'd told
+        myself I'd come back to. The next two weeks were cleanup — fixing what I'd rushed,
+        filling in what I'd missed, and patching the parts I'd compensated for on the fly
+        instead of doing properly.
+      </p>
+
+      <p>
+        This is the version of that story worth writing down.
+      </p>
+
+      <h2>Some background on the project</h2>
+
+      <p>
+        The codebase was a Transportation Management System — 236,000 lines of Vue 2,
+        handling cargo assignments, driver logistics, trip tracking, and billing. It was a
+        full ERP-style system: dozens of forms, data-heavy tables, complex state across pages.
+        I hadn't written it. I wasn't the one who knew its domain logic.
+      </p>
+
+      <p>
+        The deadline was hard. Vue 2 was approaching end-of-life, the team wanted Vue 3 and
+        TypeScript, and the clock was running. So I started.
+      </p>
+
+      <h2>The first mistake: my estimate was optimism, not a plan</h2>
+
+      <p>
+        "One week" was based on nothing except confidence in my own speed. I hadn't mapped
+        the component count. I hadn't identified which dependencies had Vue 3 equivalents.
+        I hadn't considered edge cases in parts of the app I didn't yet understand.
+      </p>
+
+      <p>
+        The second week wasn't wasted time — it was the actual work. The first estimate
+        was me believing that moving fast is the same as having a plan. It isn't.
+      </p>
+
+      <p>
+        The lesson: whatever you estimate for a migration you haven't fully scoped, add at
+        least one more cycle. Not because you're slow — because the codebase always knows
+        things about itself that you don't yet.
+      </p>
+
+      <h2>What actually saved me: building the component library first</h2>
+
+      <p>
+        Before touching a single page, I built the core reusable layer:
+        form inputs, a data table, a modal shell, and the page layout wrapper.
+        This was the right call, and I'd do it the same way every time.
+      </p>
+
+      <p>
+        A TMS has a lot of forms. When I say a lot, I mean: the same input patterns
+        repeated across dozens of workflows. If I hadn't built the reusable components
+        first, I would have been writing the same logic sixty times across sixty forms.
+        With them in place, migrating a page became mostly mechanical — swap the old
+        components for the new ones, check that props and events still matched, move on.
+      </p>
+
+      <p>
+        If you're migrating a large application and you skip this step, you will regret it.
+        The reusable components are not a nice-to-have — they are the infrastructure
+        the rest of the migration runs on.
+      </p>
+
+      <h2>Edge cases are your enemy — and mine came from a single assumption</h2>
+
+      <p>
+        The original codebase fetched all available options from the backend every time a
+        form opened. No caching. In a system with dozens of forms, each with multiple
+        select inputs, that's an enormous number of unnecessary requests — and it was
+        visibly slowing things down.
+      </p>
+
+      <p>
+        My replacement component was better: fetch the first 10 options on open,
+        support search for anything else, cache results across the session.
+        I was happy with it.
+      </p>
+
+      <p>
+        Then I made an assumption. I assumed that all the backend endpoints used the same
+        query parameter for search. Something like:
+      </p>
+
+      <pre data-lang="http"><code>{`GET /api/drivers?name=abel
+GET /api/cargo-types?name=freight
+GET /api/locations?name=addis`}</code></pre>
+
+      <p>
+        They didn't. Each endpoint had its own parameter name — <code>name</code>,
+        <code>search</code>, <code>query</code>, <code>title</code>, sometimes something
+        domain-specific that made sense to whoever wrote that route but not to anyone
+        reading it cold. I only found this after deploying, when searches started returning
+        empty results or full unfiltered lists.
+      </p>
+
+      <p>
+        Then I had to go back through every select input across every form, double-check
+        what query param each endpoint actually expected, and fix them one by one.
+        That was a full day of work I hadn't budgeted for.
+      </p>
+
+      <p>
+        The lesson isn't "don't build reusable components." The lesson is: before you
+        abstract something, verify that the thing you're abstracting is actually
+        consistent. One hour reading the API surface before I started would have
+        saved a day of debugging after I finished.
+      </p>
+
+      <p>
+        Another edge case in the same category: add vs edit forms. I assumed they were
+        the same form — same fields, same component, just one opens empty and one
+        opens pre-populated. That assumption was wrong on two counts.
+      </p>
+
+      <p>
+        First, the data problem. When you open an edit form from a table row, the table
+        only has IDs — not the full objects. A search-and-select input needs both a
+        value to submit and a label to display. The table gives you the value. It does
+        not give you the label. So to render the edit form correctly, you need an extra
+        request just to fetch the display name of whatever was previously selected.
+        Figuring out where that data lived, which endpoint to call, and how to wire it
+        into the component — per field, across dozens of forms — was not fast.
+      </p>
+
+      <p>
+        Second, edit forms in this system had additional fields that simply didn't exist
+        on the add form. Status fields, audit fields, fields that only make sense once a
+        record exists. I'd built the component for the add case, which I'd seen first.
+        The edit case was a different form wearing the same name.
+      </p>
+
+      <p>
+        Both problems came from the same mistake: I looked at something, decided I
+        understood it, and built for what I saw. Read the edit form. Read the add form.
+        They are not the same thing.
+      </p>
+
+      <h2>You don't need to know the app — but you need to be honest about what you don't know</h2>
+
+      <p>
+        I didn't understand every feature and workflow when I started. A TMS has real
+        domain logic: cargo types, driver assignment rules, trip status transitions,
+        billing states. I didn't know what half of it meant at the beginning.
+      </p>
+
+      <p>
+        What I did: read the existing code, follow the data flow, and ask when I hit
+        something I couldn't figure out from context. Not ask someone to explain the
+        business logic to me — ask the code what it was doing, and only escalate to a
+        human when the code itself was genuinely ambiguous.
+      </p>
+
+      <p>
+        This worked. A few features needed revisiting after testing because I'd migrated
+        them mechanically without fully understanding the intent, but nothing broke badly.
+      </p>
+
+      <p>
+        If I had had more time, I would have spent it understanding the application
+        deeply before writing a single line. But I didn't have more time. The lesson
+        is that deep understanding is an asset, not a hard requirement. You can migrate
+        code you don't fully understand — as long as you're honest about the gaps,
+        read carefully, and check your work.
+      </p>
+
+      <p>
+        There's also a more specific reason surface-level was enough here: this was a
+        frontend migration. The business logic lives in the backend — I was moving
+        components, state management, and API calls. I needed to know what the UI was
+        supposed to do, not why the underlying rules are what they are. The backend
+        handles the rules; I was just migrating the thing that displays the output.
+      </p>
+
+      <p>
+        If this had been a backend migration, that would be a completely different
+        story. On the backend, the business logic <em>is</em> the code. Misunderstanding
+        a rule doesn't just produce a wrong UI — it breaks the actual behavior of the
+        system. You cannot wing that part.
+      </p>
+
+      <p>
+        Honestly though? Part of why I didn't dig deeper is also that reading business
+        logic documentation is not why I got into software. I got into software because
+        writing code is fun. I will die on this hill. The advice still stands — but I
+        will not pretend I was eager to do that part.
+      </p>
+
+      <p>
+        The worst position to be in is thinking you understand the app when you don't.
+        Winging it with awareness is survivable. Winging it while convinced you've got
+        everything covered is how bugs make it to production.
+      </p>
+
+      <h2>What happens when the deadline is near and things aren't done</h2>
+
+      <p>
+        As week two approached and it was clear I wouldn't finish everything cleanly,
+        I started making tradeoffs I shouldn't have. Features I didn't fully understand
+        got migrated mechanically — moved across without verifying the behavior was
+        correct. Edge cases I spotted but didn't have time to fix got mentally flagged
+        as "I'll come back to this." Some compensations I made on the fly — working
+        around something instead of fixing it — held up fine. Others needed to be
+        properly redone in weeks three and four.
+      </p>
+
+      <p>
+        This is what deadline pressure actually does to a migration: it doesn't make
+        the work disappear, it defers it. The two weeks of cleanup after the deadline
+        were the payment for every corner I cut in week two. The total work was the same
+        — I just front-loaded the easy parts and back-loaded the hard ones.
+      </p>
+
+      <p>
+        The real lesson isn't "don't cut corners under pressure" — sometimes you have
+        to. The lesson is: <strong>know which corners you've cut.</strong> Keep a list
+        of what you skipped, what you patched, what you're not sure about. The things
+        you don't write down are the ones that bite you two weeks later when you've
+        already moved on mentally.
+      </p>
+
+      <h2>Planning properly is not optional — it's how you avoid weeks three and four</h2>
+
+      <p>
+        If I had spent even half a day at the start laying out what needed to happen and
+        in what order — which components to build first, which pages depended on which
+        shared logic, which API endpoints needed mapping before I touched the selects —
+        I would have caught the problems before they became problems.
+      </p>
+
+      <p>
+        Instead I started writing code immediately because that felt like progress.
+        It wasn't progress. It was just activity. Real progress at the start of a
+        migration is understanding what you're migrating and in what sequence.
+        The code comes after the map.
+      </p>
+
+      <h2>What I'd do differently</h2>
+
+      <p>
+        Map the API surface before building any component that touches the backend.
+        One afternoon of reading endpoint definitions would have flagged the search
+        parameter inconsistency before it became a problem.
+      </p>
+
+      <p>
+        Be honest with the estimate from day one — and then add a week or two on top.
+        Not because you're slow, but because software always has more in it than you
+        can see at the start. The extra time isn't padding, it's where the real work
+        lives: the edge cases, the features you didn't know existed, the API
+        inconsistencies nobody documented. If you finish early, great. But if you don't
+        build that buffer in, you will use it — you'll just call it "cleanup" instead.
+      </p>
+
+      <p>
+        Make a proper plan before writing code. Not a Jira board, not a Notion doc with
+        fifteen headers — a simple ordered list of what needs to exist before what, and
+        where the risky unknowns are. Spend a day on it. That day will save you a week.
+      </p>
+
+      <h2>The short version</h2>
+
+      <p>
+        The migration took four weeks, not two. Weeks three and four were paying back what
+        I rushed in week two. Map the API surface and plan the sequence before writing
+        anything. Build the reusable component library first — everything else depends on it.
+        Don't assume internal consistency; verify it. When the deadline is close and you
+        start cutting corners, write down every corner you cut — the ones you don't
+        track are the ones that come back. And give yourself one or two more weeks than
+        you think you need. Time is always a problem in software. The best you can do
+        is stop being surprised by it.
+      </p>
+
+    </div>
+  </section>
+</Layout>

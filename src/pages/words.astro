@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MiniContact from '../components/MiniContact.astro';
+---
+
+<Layout title="Words · Abel Teame" namespace="words">
+
+  <!-- ── PAGE HEADER ───────────────────────────────────────────── -->
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <span class="here">Words</span>
+    </div>
+    <h1>Notes, opinions &amp; <span class="italic">half-finished things.</span></h1>
+    <div class="ph-meta">
+      <p class="lede">
+        What I'm thinking about, what I've shipped to npm, and the experiments
+        I keep meaning to clean up before anyone sees them. <span class="italic">Too late.</span>
+      </p>
+      <div class="meta-right">
+        <b>Updated when I remember</b>Last touched · 2026
+      </div>
+    </div>
+  </header>
+
+  <!-- ── NOW + WRITING + PLAYGROUND ────────────────────────────── -->
+  <section class="section wrap">
+    <div class="section-anchor">/ 06 currently · writing · playground</div>
+    <div class="meta" data-reveal>
+      <h2>What I'm up to, <span style="font-family:var(--serif);font-style:italic;color:var(--accent)">right now.</span></h2>
+      <div class="label">Updated when I remember</div>
+    </div>
+
+    <div class="three-col" data-reveal-stagger>
+
+      <!-- /now panel -->
+      <div class="panel">
+        <div class="ph">
+          <span>/ now</span>
+          <span>'26</span>
+        </div>
+        <h4>Currently <span class="italic">…</span></h4>
+        <div class="now-list">
+          <div class="now-item">
+            <span class="k">Building</span>
+            <span class="v">Logistics dashboard (app.chinetlink.et) — React + TanStack</span>
+          </div>
+          <div class="now-item">
+            <span class="k">Just shipped</span>
+            <span class="v">TMS migration: Vue 2 → Vue 3 + TS in 2 weeks, 62% smaller codebase</span>
+          </div>
+          <div class="now-item">
+            <span class="k">Maintaining</span>
+            <span class="v"><a href="https://www.npmjs.com/package/@customizer/modal-x" target="_blank" rel="noopener" class="tappable" style="color:var(--accent)">@customizer/modal-X</a> on npm — Vue &amp; React</span>
+          </div>
+          <div class="now-item">
+            <span class="k">Reading</span>
+            <span class="v"><span class="italic">"Designing Data-Intensive Applications"</span> slowly</span>
+          </div>
+          <div class="now-item">
+            <span class="k">Learning</span>
+            <span class="v">Data structures properly — embarrassingly overdue</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- writing panel -->
+      <div class="panel">
+        <div class="ph">
+          <span>/ writing</span>
+          <a href="#" class="tappable">All posts →</a>
+        </div>
+        <h4>Notes &amp; <span class="italic">opinions.</span></h4>
+        <div style="display:flex;flex-direction:column;flex:1">
+          <a href="/writing/forms" class="post tappable">
+            <span class="t">How I build forms without losing my mind</span>
+            <span class="m">2026 · 8 min · Vue · TanStack Form</span>
+          </a>
+          <a href="/writing/tables" class="post tappable">
+            <span class="t">How I build data tables that don't suck</span>
+            <span class="m">2026 · 7 min · Vue · TanStack Table</span>
+          </a>
+          <a href="/writing/modal-x" class="post tappable">
+            <span class="t">Modal-X — file-based modals for Vue &amp; React</span>
+            <span class="m">2025 · 6 min · Vue · React · npm</span>
+          </a>
+          <a href="/writing/tms-migration" class="post tappable">
+            <span class="t">Migrating a 236K-line Vue 2 TMS to Vue 3 — what actually happened</span>
+            <span class="m">2026 · 9 min · Vue · Migration</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- playground panel -->
+      <div class="panel">
+        <div class="ph">
+          <span>/ playground</span>
+          <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="tappable">GitHub →</a>
+        </div>
+        <h4>Experiments &amp; <span class="italic">side projects.</span></h4>
+        <div class="playground">
+          <a href="https://clever-mooncake-0037f0.netlify.app" target="_blank" rel="noopener" class="play-tile tappable">
+            <span class="glyph">▻</span>
+            <span class="t1">PWA Chat</span>
+            <span class="t2">in progress</span>
+          </a>
+          <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="play-tile tappable">
+            <span class="glyph">→</span>
+            <span class="t1">More on</span>
+            <span class="t2">GitHub</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── MINI CONTACT ───────────────────────────────────────────── -->
+  <MiniContact label="/ enough about me" heading="Want to build" italic="something?" cta="Get in touch" />
+
+</Layout>
