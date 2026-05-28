@@ -560,17 +560,30 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// bfcache restore (browser back/forward) — Lenis was stopped before navigation,
-// re-initialize it so scroll works on the restored page.
+// bfcache restore (browser back/forward).
+// bfcache freezes the full JS state — all event listeners are still attached.
+// The only things broken are:
+//   1. The overlay is covering the screen (panels at yPercent:0 from departure anim)
+//   2. Lenis was stopped() during the departure transition
+// Re-running every init adds duplicate listeners and makes things worse.
 window.addEventListener('pageshow', (e) => {
   if (!e.persisted) return;
-  // bfcache restore — DOMContentLoaded does not fire, re-run everything
+
+  // Reset overlay — it's blocking all clicks (position:fixed inset:0 z-index:high)
+  const overlay = document.getElementById('overlay');
+  const back    = document.querySelector<HTMLElement>('.overlay-panel.back');
+  const front   = document.querySelector<HTMLElement>('.overlay-panel.front');
+  const content = document.getElementById('overlay-content');
+
+  gsap.killTweensOf([back, front, content].filter(Boolean));
+  if (back)    gsap.set(back,    { yPercent: 100 });
+  if (front)   gsap.set(front,   { yPercent: 100 });
+  if (content) gsap.set(content, { opacity: 0, y: 20 });
+  overlay?.classList.remove('active');
+  document.documentElement.classList.remove('is-transitioning');
   document.body.classList.remove('menu-open');
-  initLenis();
+
+  // Restart Lenis (was stopped before navigation fired)
   lenis?.start();
-  initCursor();
-  initTheme();
-  initDrawer();
-  initTransitionLinks();
-  initPageInteractions();
+  ScrollTrigger.refresh();
 });
