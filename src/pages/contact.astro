@@ -59,7 +59,7 @@ const budgetOptions = [
       <div class="cf-form-col">
 
         <form class="cf-grid" id="cf"
-              action="https://formspree.io/f/YOUR_FORM_ID"
+              action="https://api.abelteame.dev/api/contact"
               method="POST" novalidate>
 
           <!-- Honeypot — bots fill it, humans don't -->
@@ -390,19 +390,20 @@ form.addEventListener('submit', async e => {
   submitBtn.dataset.state = 'sending';
   submitBtn.disabled      = true;
 
-  const isSpam         = honeypot.value.length > 0;
-  const isUnconfigured = form.action.includes('YOUR_FORM_ID');
+  const isSpam = honeypot.value.length > 0;
 
   try {
-    if (isSpam || isUnconfigured) {
-      // Dev preview: simulate round-trip then show success
+    if (isSpam) {
       await new Promise(r => setTimeout(r, 900));
       showSuccess();
     } else {
+      const topic  = (document.getElementById('cdd-hidden') as HTMLInputElement)?.value ?? '';
+      const budget = (document.querySelector<HTMLInputElement>('.budget-chips input:checked'))?.value ?? '';
+
       const res = await fetch(form.action, {
         method:  'POST',
-        body:    new FormData(form),
-        headers: { Accept: 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, topic, budget, message: msg }),
       });
       res.ok ? showSuccess() : showError();
     }
