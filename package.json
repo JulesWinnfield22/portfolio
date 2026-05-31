@@ -8,10 +8,11 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^4.16.0",
-    "gsap": "^3.12.5",
+    "@astrojs/sitemap": "^3.7.3",
+    "@barba/core": "^2.10.3",
     "@studio-freight/lenis": "^1.0.42",
-    "@barba/core": "^2.10.3"
+    "astro": "^4.16.0",
+    "gsap": "^3.12.5"
   },
   "description": "",
   "main": "index.js",

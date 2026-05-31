@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abelteame.dev/sitemap-index.xml

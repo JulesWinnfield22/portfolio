@@ -2,16 +2,23 @@
 export interface Props {
   title?: string;
   namespace?: string;
+  description?: string;
+  ogImage?: string;
   preloads?: { href: string; as: string; type?: string }[];
 }
 
 import '../styles/global.css';
 
 const {
-  title = 'Abel Teame — Engineer',
+  title = 'Abel Teame — Software Developer',
   namespace = 'home',
+  description = 'Software developer based in Addis Ababa. I build web apps, platforms, and tools across health, insurance, and logistics. Available for freelance and contract work.',
+  ogImage = '/og.png',
   preloads = [],
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, 'https://abelteame.dev').href;
+const ogImageURL   = `https://abelteame.dev${ogImage}`;
 
 const navLinks = [
   { href: '/work',    route: 'work',    num: '01', label: 'Work' },
@@ -45,6 +52,41 @@ const overlayTitles: Record<string, string> = {
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- SEO -->
+  <meta name="description" content={description} />
+  <meta name="author" content="Abel Teame" />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={canonicalURL} />
+  <meta property="og:title"       content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image"       content={ogImageURL} />
+  <meta property="og:site_name"   content="Abel Teame" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"       content={ogImageURL} />
+
+  <!-- JSON-LD -->
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Abel Teame",
+    "url": "https://abelteame.dev",
+    "email": "hello@abelteame.dev",
+    "jobTitle": "Software Developer",
+    "description": description,
+    "knowsAbout": ["Vue.js","React","TypeScript","Node.js","Elixir","Kotlin"],
+    "sameAs": [
+      "https://github.com/JulesWinnfield22",
+      "https://linkedin.com/in/abelteame"
+    ]
+  })} />
   {preloads.map((p: { href: string; as: string; type?: string }) => (
     <link rel="preload" href={p.href} as={p.as} type={p.type} />
   ))}
