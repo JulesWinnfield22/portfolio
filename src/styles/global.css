@@ -1216,6 +1216,52 @@ body[data-theme="light"] .theme-toggle .icon-sun  { display: none; }
   white-space: nowrap;
 }
 .home-preview .pv-head .see-all:hover { color: var(--accent); }
+/* ── HOME WRITING + CV ───────────────────────────────────────────── */
+.home-writing {
+  padding-top: var(--pad-section);
+  padding-bottom: var(--pad-section);
+  border-top: 1px solid var(--rule);
+}
+.home-writing-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 28px;
+}
+.home-writing-head .label {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.home-writing-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 40px;
+  align-items: start;
+}
+.home-posts { border-top: 1px solid var(--rule); }
+.home-cv {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  padding-top: 4px;
+}
+.home-cv p {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .home-writing-body { grid-template-columns: 1fr; }
+  .home-cv { align-items: flex-start; }
+}
+
 .home-about {
   padding-top: var(--pad-section);
   padding-bottom: var(--pad-section);
