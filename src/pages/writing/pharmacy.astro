@@ -17,7 +17,7 @@ import Layout from "../../layouts/Layout.astro";
     </div>
     <h1>
       Building a pharmacy system for a government institution —
-      <span class="italic">54 branches, no manual fallback.</span>
+      <span class="italic">54 branches across Addis Ababa.</span>
     </h1>
     <div class="ph-meta">
       <div class="article-meta">
@@ -170,6 +170,29 @@ import Layout from "../../layouts/Layout.astro";
         most developers only develop by doing it.
       </p>
 
+      <h2>The tablet situation</h2>
+
+      <p>
+        Power cuts are frequent in Addis Ababa. Late in the project, someone
+        pointed out that when the lights go out, the branches needed a fallback.
+        The solution: put a tablet in each branch. Reasonable idea. Except it was
+        a last-minute addition, and I had built the entire system for desktop.
+        No responsive design, no tablet layout — I simply hadn't had time for it.
+      </p>
+
+      <p>
+        So when we trained the pharmacists, we showed them a desktop interface
+        on a tablet. Pinching and zooming through a UI that was clearly not
+        designed for them. It worked, technically. It was not great. The
+        pharmacists were patient about it. I was embarrassed.
+      </p>
+
+      <p>
+        It's one of those things that sounds like a minor detail until you're
+        standing in front of twenty people trying to demonstrate software that
+        doesn't quite fit the screen they're holding.
+      </p>
+
       <h2>What I'd do differently</h2>
 
       <p>
@@ -184,6 +207,11 @@ import Layout from "../../layouts/Layout.astro";
         I'd also negotiate for a phased deployment more explicitly. Going live
         with a partial system works — we proved that — but it's much less stressful
         when the phases are planned rather than improvised.
+      </p>
+
+      <p>
+        Build responsive from day one, even if the brief says "desktop only."
+        Requirements change. Someone will hand a pharmacist a tablet eventually.
       </p>
 
       <p>
