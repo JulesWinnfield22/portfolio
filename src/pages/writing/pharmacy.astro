@@ -1,0 +1,215 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout
+  title="Building a pharmacy system for a government institution with 54 branches · Abel Teame"
+  namespace="words"
+  description="Building a pharmacy management system for Kenema — a government-owned pharmacy in Addis Ababa with 54 branches. CBHI verification, fraud prevention, and what working with government procurement actually looks like."
+>
+  <header class="page-header wrap" data-reveal>
+    <div class="crumbs">
+      <a href="/" class="tappable">Home</a>
+      <span class="sep">/</span>
+      <a href="/words" class="tappable">Words</a>
+      <span class="sep">/</span>
+      <span class="here">Pharmacy System</span>
+    </div>
+    <h1>
+      Building a pharmacy system for a government institution —
+      <span class="italic">54 branches, no manual fallback.</span>
+    </h1>
+    <div class="ph-meta">
+      <div class="article-meta">
+        <span>2026</span>
+        <span>·</span>
+        <span>8 min read</span>
+        <span>·</span>
+        <span>Healthcare · Government · Ethiopia · Vue.js</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="section wrap">
+    <div class="prose" data-reveal>
+
+      <h2>The brief</h2>
+
+      <p>
+        Kenema Pharmacy Enterprise is a government-owned pharmacy chain operating
+        54 branches across Addis Ababa. When I joined the project, they were running
+        on a manual system — paper records, handwritten dispensing logs, no real-time
+        inventory across branches. The brief was to replace all of it.
+      </p>
+
+      <p>
+        The real reason they wanted a system, though, wasn't efficiency. It was fraud.
+      </p>
+
+      <h2>The actual problem: the manual system was being exploited</h2>
+
+      <p>
+        About 75% of Kenema's patients were members of CBHI — Community Based Health
+        Insurance, a government-run scheme that covers low-income households across
+        Ethiopia. CBHI members get heavily subsidised or free medication. Under the
+        manual system, there was no reliable way to verify membership at the point of
+        dispensing. Pharmacists were taking advantage of that.
+      </p>
+
+      <p>
+        Patients would claim to be CBHI members when they weren't. Some pharmacists
+        were colluding — dispensing to non-members at subsidised rates and pocketing
+        the difference. With 54 branches and no centralised verification, it was
+        impossible to catch. The institution knew it was happening at scale. They
+        just couldn't prove it or stop it.
+      </p>
+
+      <p>
+        That's what the system needed to fix first. Before inventory management,
+        before reporting dashboards, before anything else — the CBHI verification
+        problem had to be solved.
+      </p>
+
+      <h2>Building the CBHI system</h2>
+
+      <p>
+        We didn't just build a pharmacy system. We also built the CBHI enrollment
+        and management system — the thing that actually contains the member records
+        that the pharmacy checks against.
+      </p>
+
+      <p>
+        The enrollment system allowed health institutions to register members,
+        track their household coverage, and manage renewals. When a patient walks
+        into any Kenema branch and claims CBHI membership, the pharmacist can verify
+        them in real time — pulling from a centralised record rather than trusting
+        a card or a paper form that anyone could fake.
+      </p>
+
+      <p>
+        We also integrated with other health providers in Addis Ababa so the system
+        could reference a patient's broader medical history — what they'd been
+        prescribed elsewhere, which conditions were on record. This wasn't just
+        about fraud prevention. It was about building the foundation for something
+        closer to a connected healthcare record in a city where that didn't really
+        exist yet.
+      </p>
+
+      <p>
+        That scope was ambitious. Probably too ambitious for the timeline we were given.
+      </p>
+
+      <h2>What working with a government client actually looks like</h2>
+
+      <p>
+        I'll be honest: working with a government institution is a different
+        experience than working with a private company. Not necessarily worse —
+        just different in ways that will catch you off guard if you're not prepared.
+      </p>
+
+      <p>
+        The approval process is slow by design. Decisions go through committees.
+        Sign-offs that would take a day at a startup take two weeks. That's not
+        negligence — it's how institutions that manage public money are supposed
+        to operate. But it means your timeline is never really your timeline.
+      </p>
+
+      <p>
+        Requirements were also incomplete from the start. Not because the
+        stakeholders didn't know what they wanted — they did, mostly — but because
+        a lot of the detail only becomes clear once you're building. "The pharmacist
+        needs to verify the patient" sounds simple until you're asking: which
+        pharmacist? At which branch? What happens if the network is down? What
+        if the patient's name is spelled differently in the enrollment record?
+        Those questions don't get answered in a procurement document.
+      </p>
+
+      <p>
+        We were also competing for the contract before we had it, which meant
+        we needed to deliver a working prototype fast — fast enough to demonstrate
+        capability, before the full spec even existed.
+      </p>
+
+      <h2>The architecture decision that actually mattered</h2>
+
+      <p>
+        To win the bid, we needed to ship features quickly. Not production-quality
+        features — working, demonstrable features that showed the committee we
+        understood the problem. The architecture I chose was modular from day one:
+        strict component boundaries, shared utilities, a design system built before
+        the product screens, and coding guidelines the whole team followed.
+      </p>
+
+      <p>
+        That sounds like standard practice. In this context it was a competitive
+        advantage. When a new requirement came in — and they came in constantly —
+        we could add it without breaking three other things. When a stakeholder
+        saw a demo and asked "can you also show X?", the answer was usually
+        "we can have that by tomorrow." The modular structure made that possible.
+      </p>
+
+      <p>
+        Most of the architectural decisions I made weren't clever. They were just
+        disciplined. The discipline paid off.
+      </p>
+
+      <h2>Shipping to production before we were done</h2>
+
+      <p>
+        We didn't hit the deadline. The system went live before every feature was
+        complete — which is common in healthcare software, and uncomfortable every
+        time it happens.
+      </p>
+
+      <p>
+        We were still deploying features to the production environment after go-live.
+        The branches were using the system for real dispensing while we were still
+        building parts of it. That requires a level of care that's hard to describe
+        if you haven't done it: every deploy has to be backwards-compatible, every
+        database migration has to be non-destructive, every incomplete feature has
+        to be hidden cleanly from the live interface until it's ready.
+      </p>
+
+      <p>
+        It also requires a certain tolerance for pressure. Live patients, live
+        medication records, live financial transactions — and you're still building.
+        Not ideal. But real. And handling it without breaking the system is a skill
+        most developers only develop by doing it.
+      </p>
+
+      <h2>What I'd do differently</h2>
+
+      <p>
+        Push harder on requirements before the deadline is set. In government
+        procurement, the timeline is often fixed before the scope is understood.
+        That's a structural problem you can't fully solve — but you can mitigate
+        it by front-loading as much discovery as possible and being explicit,
+        in writing, about what is and isn't in scope before work starts.
+      </p>
+
+      <p>
+        I'd also negotiate for a phased deployment more explicitly. Going live
+        with a partial system works — we proved that — but it's much less stressful
+        when the phases are planned rather than improvised.
+      </p>
+
+      <p>
+        The modular architecture: I'd do that the same. It was the right call
+        and I'd make it again.
+      </p>
+
+      <h2>The short version</h2>
+
+      <p>
+        We built a pharmacy management and CBHI verification system for a
+        government-owned pharmacy in Addis Ababa. 54 branches, real patients,
+        real fraud being prevented. Working with government is slow, the requirements
+        are never complete, and the deadline is usually wrong — but the work is
+        real in a way that most software projects aren't. People rely on this system
+        every day. That matters.
+      </p>
+
+    </div>
+  </section>
+
+</Layout>
