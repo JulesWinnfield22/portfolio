@@ -397,7 +397,7 @@ form.addEventListener('submit', async e => {
       await new Promise(r => setTimeout(r, 900));
       showSuccess();
     } else {
-      const topic  = (document.getElementById('cdd-hidden') as HTMLInputElement)?.value ?? '';
+      const topic  = hiddenI.value ?? '';
       const budget = (document.querySelector<HTMLInputElement>('.budget-chips input:checked'))?.value ?? '';
 
       const res = await fetch(form.action, {
