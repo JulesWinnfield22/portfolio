@@ -315,6 +315,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
 body[data-theme="dark"]  .theme-toggle .icon-moon { display: none; }
 body[data-theme="light"] .theme-toggle .icon-sun  { display: none; }
+.nav-cv {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  transition: border-color .25s var(--ease), color .25s var(--ease);
+  flex-shrink: 0;
+}
+.nav-cv:hover { border-color: var(--accent); color: var(--accent); }
 .nav-cta {
   display: inline-flex;
   align-items: center;
