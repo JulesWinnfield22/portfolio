@@ -1,0 +1,199 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Login · Admin">
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-label">/ admin access</div>
+      <h1>Sign <span class="italic">in.</span></h1>
+    </div>
+
+    <form class="login-form" id="login-form" novalidate>
+      <div class="lf-field" id="lf-email-wrap">
+        <label for="lf-email">Email</label>
+        <input id="lf-email" type="email" name="email" autocomplete="email" placeholder="hello@abelteame.dev" />
+        <span class="lf-err" id="lf-email-err"></span>
+      </div>
+
+      <div class="lf-field" id="lf-pass-wrap">
+        <label for="lf-pass">Password</label>
+        <input id="lf-pass" type="password" name="password" autocomplete="current-password" placeholder="••••••••" />
+        <span class="lf-err" id="lf-pass-err"></span>
+      </div>
+
+      <div class="lf-err-global" id="lf-global-err"></div>
+
+      <button type="submit" class="lf-btn" id="lf-btn">
+        <span class="lf-btn-label">Sign in</span>
+        <svg class="lf-btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M3 11L11 3M11 3H4M11 3V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+</AdminLayout>
+
+<style>
+  .italic { font-family: 'Instrument Serif', serif; font-style: italic; }
+
+  .login-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100dvh - 56px);
+    padding: 32px 16px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 12px;
+    padding: 40px 36px;
+    background: var(--bg-2);
+  }
+
+  .login-header { margin-bottom: 32px; }
+  .login-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .login-header h1 {
+    font-size: clamp(28px, 5vw, 36px);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .login-form { display: flex; flex-direction: column; gap: 20px; }
+
+  .lf-field { display: flex; flex-direction: column; gap: 6px; }
+  .lf-field label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .lf-field input {
+    background: var(--bg-3);
+    border: 1px solid var(--rule-strong);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .lf-field input::placeholder { color: var(--muted); }
+  .lf-field input:focus { border-color: var(--accent); }
+  .lf-field.is-error input { border-color: #e05; }
+
+  .lf-err {
+    font-size: 12px;
+    color: #e05;
+    min-height: 16px;
+    display: none;
+  }
+  .lf-field.is-error .lf-err { display: block; }
+
+  .lf-err-global {
+    font-size: 13px;
+    color: #e05;
+    text-align: center;
+    min-height: 18px;
+  }
+
+  .lf-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 13px 20px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 4px;
+    transition: opacity .2s;
+  }
+  .lf-btn:hover { opacity: .88; }
+  .lf-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .lf-btn-arrow { flex-shrink: 0; }
+</style>
+
+<script>
+  if (localStorage.getItem('admin_token')) location.replace('/admin/messages');
+
+  const API = 'https://api.abelteame.dev';
+
+  const form       = document.getElementById('login-form')   as HTMLFormElement;
+  const emailWrap  = document.getElementById('lf-email-wrap')!;
+  const passWrap   = document.getElementById('lf-pass-wrap')!;
+  const emailErr   = document.getElementById('lf-email-err')!;
+  const passErr    = document.getElementById('lf-pass-err')!;
+  const globalErr  = document.getElementById('lf-global-err')!;
+  const btn        = document.getElementById('lf-btn')        as HTMLButtonElement;
+
+  const emailInput = document.getElementById('lf-email') as HTMLInputElement;
+  const passInput  = document.getElementById('lf-pass')  as HTMLInputElement;
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function clearErrors() {
+    emailWrap.classList.remove('is-error');
+    passWrap.classList.remove('is-error');
+    globalErr.textContent = '';
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    clearErrors();
+
+    const email    = emailInput.value.trim();
+    const password = passInput.value;
+    let valid      = true;
+
+    if (!emailRe.test(email)) {
+      emailWrap.classList.add('is-error');
+      emailErr.textContent = 'Enter a valid email.';
+      valid = false;
+    }
+    if (!password) {
+      passWrap.classList.add('is-error');
+      passErr.textContent = 'Password required.';
+      valid = false;
+    }
+    if (!valid) return;
+
+    btn.disabled = true;
+    btn.querySelector<HTMLElement>('.lf-btn-label')!.textContent = 'Signing in…';
+
+    try {
+      const res  = await fetch(`${API}/api/admin/login`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Invalid credentials');
+      localStorage.setItem('admin_token', data.token);
+      location.replace('/admin/messages');
+    } catch (err: any) {
+      globalErr.textContent = err.message ?? 'Something went wrong.';
+      btn.disabled = false;
+      btn.querySelector<HTMLElement>('.lf-btn-label')!.textContent = 'Sign in';
+    }
+  });
+</script>

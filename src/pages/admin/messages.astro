@@ -1,0 +1,312 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+<AdminLayout title="Messages · Admin">
+
+<div class="am-page">
+  <div class="am-top">
+    <div>
+      <div class="am-label">/ inbox</div>
+      <h1 class="am-title">Messages</h1>
+    </div>
+    <div class="am-stats">
+      <span id="am-unread-badge" class="am-badge" style="display:none"></span>
+      <span id="am-total" class="am-total"></span>
+    </div>
+  </div>
+
+  <div id="am-loading" class="am-state">Loading…</div>
+  <div id="am-empty"   class="am-state" style="display:none">No messages yet.</div>
+  <div id="am-error"   class="am-state am-state-err" style="display:none">Failed to load messages.</div>
+
+  <div id="am-list" class="am-list" style="display:none"></div>
+</div>
+
+</AdminLayout>
+
+<style>
+  .italic { font-family: 'Instrument Serif', serif; font-style: italic; }
+
+  .am-page { max-width: 860px; margin: 0 auto; }
+
+  .am-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .am-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .am-title { font-size: clamp(28px, 5vw, 40px); font-weight: 700; line-height: 1.1; }
+
+  .am-stats { display: flex; align-items: center; gap: 10px; }
+
+  .am-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+  .am-total {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  .am-state {
+    padding: 48px 0;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .04em;
+  }
+  .am-state-err { color: #e05; }
+
+  /* Message list */
+  .am-list { display: flex; flex-direction: column; gap: 1px; }
+
+  .am-card {
+    background: var(--bg-2);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 20px 22px;
+    transition: border-color .2s;
+  }
+  .am-card:hover { border-color: var(--rule-strong); }
+  .am-card.is-unread { border-left: 3px solid var(--accent); }
+
+  .am-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .am-sender { display: flex; flex-direction: column; gap: 2px; }
+  .am-name {
+    font-weight: 600;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .am-unread-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .am-email {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .am-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .am-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--bg-3);
+    color: var(--muted);
+  }
+  .am-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .am-message {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink-2);
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .am-actions { display: flex; gap: 8px; }
+
+  .am-action {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--rule-strong);
+    background: none;
+    color: var(--muted);
+    transition: color .2s, border-color .2s, background .2s;
+  }
+  .am-action:hover { color: var(--ink); border-color: var(--ink-2); }
+  .am-action.del:hover { color: #e05; border-color: #e05; background: rgba(238,0,85,.06); }
+  .am-action:disabled { opacity: .4; cursor: not-allowed; }
+</style>
+
+<script>
+  const API = 'https://api.abelteame.dev';
+
+  const token = localStorage.getItem('admin_token');
+  if (!token) location.replace('/admin/login');
+
+  const elLoading = document.getElementById('am-loading')!;
+  const elEmpty   = document.getElementById('am-empty')!;
+  const elError   = document.getElementById('am-error')!;
+  const elList    = document.getElementById('am-list')!;
+  const elBadge   = document.getElementById('am-unread-badge')!;
+  const elTotal   = document.getElementById('am-total')!;
+
+  interface Message {
+    _id: string;
+    name: string;
+    email: string;
+    topic: string;
+    budget: string;
+    message: string;
+    read: boolean;
+    createdAt: string;
+  }
+
+  let messages: Message[] = [];
+
+  function fmt(iso: string) {
+    return new Date(iso).toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'short', year: 'numeric',
+    });
+  }
+
+  function renderStats() {
+    const unread = messages.filter(m => !m.read).length;
+    elTotal.textContent = `${messages.length} total`;
+    if (unread > 0) {
+      elBadge.textContent = `${unread} unread`;
+      elBadge.style.display = '';
+    } else {
+      elBadge.style.display = 'none';
+    }
+  }
+
+  function renderList() {
+    elList.innerHTML = '';
+    messages.forEach(msg => {
+      const card = document.createElement('div');
+      card.className = `am-card${msg.read ? '' : ' is-unread'}`;
+      card.dataset.id = msg._id;
+
+      const chips = [msg.topic, msg.budget].filter(Boolean).map(
+        v => `<span class="am-chip">${v}</span>`
+      ).join('');
+
+      card.innerHTML = `
+        <div class="am-card-head">
+          <div class="am-sender">
+            <div class="am-name">
+              ${!msg.read ? '<span class="am-unread-dot"></span>' : ''}
+              ${msg.name}
+            </div>
+            <a href="mailto:${msg.email}" class="am-email">${msg.email}</a>
+          </div>
+          <div class="am-meta">
+            ${chips}
+            <span class="am-date">${fmt(msg.createdAt)}</span>
+          </div>
+        </div>
+        <p class="am-message">${msg.message}</p>
+        <div class="am-actions">
+          ${!msg.read
+            ? `<button class="am-action mark-read" data-id="${msg._id}">Mark read</button>`
+            : `<span class="am-action" style="opacity:.35;cursor:default;border-color:transparent">Read</span>`
+          }
+          <button class="am-action del" data-id="${msg._id}">Delete</button>
+        </div>
+      `;
+      elList.appendChild(card);
+    });
+  }
+
+  async function load() {
+    try {
+      const res = await fetch(`${API}/api/admin/messages`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 401) { localStorage.removeItem('admin_token'); location.replace('/admin/login'); return; }
+      const data = await res.json();
+      messages = data.messages ?? [];
+
+      elLoading.style.display = 'none';
+      if (messages.length === 0) { elEmpty.style.display = ''; return; }
+      elList.style.display = '';
+      renderStats();
+      renderList();
+    } catch {
+      elLoading.style.display = 'none';
+      elError.style.display = '';
+    }
+  }
+
+  elList.addEventListener('click', async e => {
+    const btn = (e.target as Element).closest<HTMLButtonElement>('button.am-action');
+    if (!btn) return;
+    const id = btn.dataset.id!;
+    btn.disabled = true;
+
+    if (btn.classList.contains('mark-read')) {
+      try {
+        const res = await fetch(`${API}/api/admin/messages/${id}`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const idx = messages.findIndex(m => m._id === id);
+          if (idx !== -1) messages[idx].read = true;
+          renderStats();
+          renderList();
+        }
+      } catch { btn.disabled = false; }
+
+    } else if (btn.classList.contains('del')) {
+      if (!confirm('Delete this message?')) { btn.disabled = false; return; }
+      try {
+        const res = await fetch(`${API}/api/admin/messages/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          messages = messages.filter(m => m._id !== id);
+          renderStats();
+          if (messages.length === 0) { elList.style.display = 'none'; elEmpty.style.display = ''; return; }
+          renderList();
+        }
+      } catch { btn.disabled = false; }
+    }
+  });
+
+  load();
+</script>

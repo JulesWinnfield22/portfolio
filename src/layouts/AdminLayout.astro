@@ -1,0 +1,110 @@
+---
+export interface Props {
+  title?: string;
+}
+import '../styles/tokens.css';
+const { title = 'Admin · Abel Teame' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title}</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <meta name="robots" content="noindex,nofollow" />
+</head>
+<body data-theme="dark">
+<script is:inline>
+  const _t = localStorage.getItem('ot-theme');
+  if (_t) document.body.dataset.theme = _t;
+</script>
+
+<div class="a-shell">
+  <header class="a-header">
+    <a href="/" class="a-brand">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.5 21 L12 3 L20.5 21"/>
+        <path d="M3.5 13 L20.5 13"/>
+        <path d="M12 13 L12 17"/>
+      </svg>
+      <span>Abel <span class="a-brand-sep">·</span> Admin</span>
+    </a>
+    <button class="a-logout" id="a-logout" style="display:none">Log out</button>
+  </header>
+
+  <main class="a-main">
+    <slot />
+  </main>
+</div>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; font-family: inherit; }
+
+  .a-shell { display: flex; flex-direction: column; min-height: 100dvh; }
+
+  .a-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(16px, 4vw, 48px);
+    height: 56px;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .a-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: .04em;
+    color: var(--ink-2);
+  }
+  .a-brand svg { color: var(--accent); flex-shrink: 0; }
+  .a-brand-sep { color: var(--muted); }
+
+  .a-logout {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    padding: 5px 14px;
+    transition: color .2s, border-color .2s;
+  }
+  .a-logout:hover { color: var(--ink); border-color: var(--ink-2); }
+
+  .a-main { flex: 1; padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 48px); }
+</style>
+
+<script>
+  const btn = document.getElementById('a-logout');
+  if (localStorage.getItem('admin_token')) btn!.style.display = '';
+  btn?.addEventListener('click', () => {
+    localStorage.removeItem('admin_token');
+    location.href = '/admin/login';
+  });
+</script>
+</body>
+</html>
