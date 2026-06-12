@@ -1,0 +1,241 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[left=0.75in, right=0.75in, top=0.65in, bottom=0.65in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+\hypersetup{colorlinks=true, urlcolor=black, linkcolor=black}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\vspace{-4pt}\rule{\linewidth}{0.6pt}\vspace{2pt}]
+\titlespacing*{\section}{0pt}{12pt}{5pt}
+
+\setlist[itemize]{
+  noitemsep,
+  topsep=3pt,
+  parsep=0pt,
+  partopsep=0pt,
+  leftmargin=1.4em,
+  label=\textbullet
+}
+
+\begin{document}
+
+% ── HEADER ────────────────────────────────────────────────────────────────────
+\begin{center}
+  {\LARGE\bfseries Abel Teame}\\[5pt]
+  Addis Ababa, Ethiopia \quad\textbar\quad
+  +251 987 971 218 \quad\textbar\quad
+  \href{mailto:abelteame22@gmail.com}{abelteame22@gmail.com}\\[3pt]
+  \href{https://linkedin.com/in/abelteame}{linkedin.com/in/abelteame}
+  \quad\textbar\quad
+  \href{https://github.com/JulesWinnfield22}{github.com/JulesWinnfield22}
+  \quad\textbar\quad
+  \href{https://abelteame.dev}{abelteame.dev}
+\end{center}
+
+\vspace{4pt}
+
+% ── SUMMARY ───────────────────────────────────────────────────────────────────
+\section{Summary}
+Senior Frontend Developer with 4+ years of experience designing and delivering enterprise-scale web
+applications across healthcare, insurance, and logistics domains. Expert in Vue.js and React; led
+cross-functional teams building platforms that serve thousands of users across Ethiopia. Published
+open-source npm packages. Strong full-stack awareness spanning Node.js, Express, and
+relational/NoSQL databases.
+
+% ── EXPERIENCE ────────────────────────────────────────────────────────────────
+\section{Experience}
+
+\textbf{Frontend Developer} \hfill \textit{December 2025 -- Present}\\
+\textit{Chinet Link Tech PLC, Addis Ababa, Ethiopia}\\[5pt]
+I architected and work on a robust frontend infrastructure by leveraging the TanStack ecosystem and
+React to ensure high performance and maintainable code. By integrating TanStack Query for efficient
+server-state management and Router for type-safe navigation, I eliminated common data-fetching
+bottlenecks and enhanced user flow. Additionally, I utilized TanStack Table and Form to build
+complex, scalable UI components capable of handling intricate data manipulation with seamless
+validation and real-time updates.
+
+\vspace{8pt}
+\textbf{Senior Frontend Developer \& Team Lead} \hfill \textit{October 2023 -- November 2025}\\
+\textit{Medco Technology Solutions, Addis Ababa, Ethiopia}
+\begin{itemize}
+  \item Led, mentored, and managed a team of 3 frontend developers; owned all technical decisions,
+        conducted regular code reviews, and enforced engineering best practices across the team.
+  \item Designed and owned the core Vue.js frontend architecture, prioritising modularity, scalability,
+        and performance for large-scale enterprise applications.
+  \item Delivered 4 major digital transformation projects at speed to win competitive government and
+        enterprise bids --- including Kenema Pharmacies Enterprise
+        (\href{https://rx.kenemapharmacy.com}{rx.kenemapharmacy.com}) and the CBHI
+        (Community-Based Health Insurance) platform, both of which remain in active production use
+        and continue to be strategic assets for the company.
+  \item Also delivered Alert Hospital Pharmacy Management System and a Life/Medical Insurance \&
+        Claim Management System, converting critical manual workflows into robust digital platforms.
+  \item Engineered a shared component library adopted across all products --- including a custom
+        \texttt{useApiRequest} composable built from scratch that replicated TanStack Query's core
+        behaviour (request lifecycle, loading/error states, caching, and reactivity) before the team
+        migrated to TanStack Query --- accelerating feature delivery and ensuring API-handling
+        consistency across every project.
+  \item Established onboarding standards and training programmes ensuring all new hires were
+        productive on the codebase within their first week.
+  \item Collaborated with Product Management, Backend Engineering, and Design to translate business
+        requirements into maintainable, well-tested features on tight deadlines.
+\end{itemize}
+
+\vspace{8pt}
+\textbf{Frontend Developer} \hfill \textit{September 2019 -- December 2022}\\
+\textit{Kulfinet (\href{https://kulfinet.com}{kulfinet.com}), Addis Ababa, Ethiopia}
+\begin{itemize}
+  \item Built and maintained a marketplace platform connecting buyers and sellers across Ethiopia,
+        serving 1{,}000--1{,}500 monthly active users.
+  \item Developed performant Vue.js frontends integrated with a NestJS/PostgreSQL backend, improving
+        page load times through code-splitting and lazy loading.
+  \item Implemented responsive designs ensuring consistent UX across mobile and desktop.
+\end{itemize}
+
+\vspace{8pt}
+\textbf{Frontend Developer} \hfill \textit{2018 -- 2019}\\
+\textit{RENOSTAR}
+\begin{itemize}
+  \item Migrated legacy Joomla sites to WordPress; subsequently migrated selected projects to
+        Vue.js, modernising the tech stack and improving maintainability.
+\end{itemize}
+
+% ── PROJECTS ──────────────────────────────────────────────────────────────────
+\section{Projects}
+
+\textbf{Foreign Employment Term Assurance Platform} --- Nyala Insurance
+(\href{https://niscofetap.com}{niscofetap.com})
+\begin{itemize}
+  \item Built responsive frontend for a national-scale insurance platform managing foreign employment
+        term assurance policies, reducing manual processing errors and improving client self-service.
+  \item \textit{Stack:} Vue.js, Java, Spring, MySQL
+\end{itemize}
+
+\vspace{4pt}
+\textbf{Alert Hospital Pharmacy Management System} --- (Live at Alert Hospital)
+\begin{itemize}
+  \item Developed the complete frontend for a deployed pharmacy system; improved medication dispensing
+        accuracy, streamlined inventory tracking, and enhanced patient safety workflows.
+  \item \textit{Stack:} Vue.js, Java, Spring, MySQL
+\end{itemize}
+
+\vspace{4pt}
+\textbf{Mobile Insurance App} --- Lemobile
+\begin{itemize}
+  \item Developed a React Native app providing users with instant access to phone insurance policy
+        details and a guided claim-filing flow.
+  \item \textit{Stack:} React Native, Java, Spring, MySQL
+\end{itemize}
+
+\vspace{4pt}
+\textbf{Personal Portfolio} (\href{https://abelteame.dev}{abelteame.dev})
+\begin{itemize}
+  \item Designed and built a personal portfolio site with smooth page transitions, scroll-driven
+        animations, and near-instant load times using Astro's static output.
+  \item Implemented GSAP animations, Lenis smooth scroll, and Barba.js page transitions for a
+        polished, app-like browsing experience with zero JavaScript framework overhead.
+  \item \textit{Stack:} Astro, GSAP, Lenis, Barba.js
+\end{itemize}
+
+\vspace{4pt}
+\textbf{Modal-X} --- \texttt{@customizer/modal-X} on npm
+\begin{itemize}
+  \item Engineered and published an open-source Vue.js \& React modal plugin with a file-based API,
+        adopted by the Vue.js community to eliminate repetitive modal boilerplate.
+  \item \textit{Stack:} Vue.js, React, TypeScript
+\end{itemize}
+
+\vspace{4pt}
+\textbf{Enterprise Form System} (Vue.js \& React)
+\begin{itemize}
+  \item Designed and built a production form system on top of TanStack Form, implemented identically
+        in both Vue 3 and React, and deployed across all enterprise products.
+  \item \textit{Unsaved-changes guard:} blocks in-app route navigation
+        (\texttt{onBeforeRouteLeave} / TanStack Router \texttt{useBlocker}) and browser tab close
+        (\texttt{beforeunload}), showing a confirmation modal --- preventing accidental data loss on
+        complex enterprise forms.
+  \item \textit{Smart dirty detection:} custom \texttt{hashForCompare} handles File, Date, nested
+        objects, and arrays correctly --- closing a gap in TanStack Form's built-in dirty check which
+        fails on these types.
+  \item \textit{Auto-scroll to first error:} on submit, automatically locates and focuses the first
+        invalid field, eliminating manual error hunting on long forms.
+  \item \textit{Reactive edit-mode sync:} watches external \texttt{values} prop and patches only
+        changed fields --- enabling seamless pre-population for edit workflows without full form resets.
+  \item \textit{Payload sanitisation:} strips internal \texttt{fakeId} tracking keys, removes
+        empty/null fields, and coerces numeric strings before submission --- keeping API payloads
+        clean automatically.
+  \item \textit{Conditional field cleanup:} field values and errors are cleared on unmount, so
+        dynamically shown/hidden fields never leave stale state in the form.
+  \item \textit{Zero-dependency validation engine:} replaced Zod/Yup entirely with a lightweight
+        TypeScript validation layer --- every rule is a plain
+        \texttt{(value) => [boolean, string]} function, making the system fully composable and
+        trivially extensible without learning a schema DSL.
+  \item \textit{\texttt{validateAll} orchestrator:} runs required and priority validators first,
+        skips non-required rules on empty values (preventing ``invalid email'' messages on blank
+        optional fields), passes form context for cross-field rules (e.g.\ password confirmation,
+        date range comparisons), and short-circuits on the first error.
+  \item \textit{30+ built-in validators:} email, phone, date/time comparisons (gt/gte/lt/lte), file
+        size \& type, price format, alpha/alphanumeric, time ranges, password strength, and more ---
+        all returning i18n-ready messages via the app's lang store.
+  \item \textit{Array-row validation:} \texttt{validateArrayItems} validates each row of dynamic
+        list inputs with \texttt{fakeId}-keyed errors, so adding or removing rows never corrupts
+        existing error state.
+  \item \textit{Stack:} Vue 3, React, TanStack Form, TypeScript
+\end{itemize}
+
+\vspace{4pt}
+\textbf{MARBARKTRADING CMS} (\href{https://marbaraktrading.com}{marbaraktrading.com})
+\begin{itemize}
+  \item Designed and deployed a full-stack custom CMS enabling non-technical staff to manage website
+        content independently, removing developer dependency for routine content updates.
+  \item \textit{Stack:} Vue.js, Express.js, Node.js, MongoDB
+\end{itemize}
+
+% ── TECHNICAL SKILLS ──────────────────────────────────────────────────────────
+\section{Technical Skills}
+
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}p{2.6cm}p{12.8cm}@{}}
+\textbf{Languages}        & JavaScript (ES6+), TypeScript, HTML5, CSS3, PHP, Java, Python, Dart, Kotlin, Elixir \\
+\textbf{Frameworks}       & Vue.js, Nuxt.js, React.js, Next.js, Astro \\
+\textbf{TanStack}         & Query, Router, Table, Form \\
+\textbf{State Mgmt.}      & Pinia, Vuex, Redux, Zustand, React Context API \\
+\textbf{UI / Styling}     & Tailwind CSS, Shadcn UI, Reka UI, class-variance-authority, tailwind-merge, Material-UI, Bootstrap \\
+\textbf{Animation}        & GSAP, Lenis, Barba.js \\
+\textbf{Forms}            & React Hook Form, TanStack Form, Formik \\
+\textbf{Mobile}           & React Native, Flutter (intermediate) \\
+\textbf{Maps}             & Leaflet, Google Maps API \\
+\textbf{Backend}          & Node.js, Express.js, NestJS, Spring Boot \\
+\textbf{Databases}        & MySQL, PostgreSQL, MongoDB \\
+\textbf{ORMs / ODMs}      & Prisma, Sequelize, Mongoose \\
+\textbf{Testing}          & Vitest, Playwright, Jest, React Testing Library, Cypress \\
+\textbf{Build Tools}      & Vite, Webpack, npm, Yarn \\
+\textbf{Version Control}  & Git, GitHub, GitLab \\
+\textbf{Real-time}        & Socket.io \\
+\textbf{Performance}      & Web Vitals, code splitting, lazy loading, image optimisation \\
+\textbf{Open Source}      & \texttt{@customizer/modal-X} --- Vue.js \& React modal plugin (published on npm) \\
+\textbf{Other}            & WordPress, WAI-ARIA (A11y), SEO best practices, Agile / Scrum \\
+\end{tabular}
+
+% ── EDUCATION ─────────────────────────────────────────────────────────────────
+\section{Education}
+
+\textbf{B.Sc.\ in Software Engineering}\\
+\textit{Microlink Information Technology and Business College, Addis Ababa, Ethiopia}
+
+% ── LANGUAGES ─────────────────────────────────────────────────────────────────
+\section{Languages}
+
+English (Professional) \quad\textbar\quad Amharic (Native) \quad\textbar\quad Tigrigna (Native)
+
+\end{document}

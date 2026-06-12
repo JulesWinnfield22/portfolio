@@ -99,10 +99,18 @@ const { title = 'Admin · Abel Teame' } = Astro.props;
 </style>
 
 <script>
+  const API = import.meta.env.PUBLIC_API_URL ?? 'https://api.abelteame.dev';
   const btn = document.getElementById('a-logout');
-  if (localStorage.getItem('admin_token')) btn!.style.display = '';
-  btn?.addEventListener('click', () => {
-    localStorage.removeItem('admin_token');
+
+  // only show logout when the cookie session is live
+  fetch(`${API}/api/admin/me`, { credentials: 'include' })
+    .then(res => { if (res.ok && btn) btn.style.display = ''; })
+    .catch(() => {});
+
+  btn?.addEventListener('click', async () => {
+    try {
+      await fetch(`${API}/api/admin/logout`, { method: 'POST', credentials: 'include' });
+    } catch {}
     location.href = '/admin/login';
   });
 </script>

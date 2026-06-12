@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+const API = import.meta.env.PUBLIC_API_URL ?? 'https://api.abelteame.dev';
+const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
+
 const budgetOptions = [
   { label: '< 10k',    value: 'lt10k'    },
   { label: '10–25k',   value: '10-25k'   },
@@ -38,10 +41,8 @@ const budgetOptions = [
       <div class="contact-meta">
         <b>I reply as soon as possible.</b>
         Or find me on<br>
-        <a href="#" class="tappable">x</a> ·
         <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="tappable">github</a> ·
-        <a href="https://linkedin.com/in/abelteame" target="_blank" rel="noopener" class="tappable">linkedin</a> ·
-        <a href="#" class="tappable">read.cv</a>
+        <a href="https://linkedin.com/in/abelteame" target="_blank" rel="noopener" class="tappable">linkedin</a>
       </div>
     </div>
 
@@ -59,7 +60,7 @@ const budgetOptions = [
       <div class="cf-form-col">
 
         <form class="cf-grid" id="cf"
-              action="https://api.abelteame.dev/api/contact"
+              action={`${API}/api/contact`}
               method="POST" novalidate>
 
           <!-- Honeypot — bots fill it, humans don't -->
@@ -152,6 +153,15 @@ const budgetOptions = [
                       placeholder="What are you building, who is it for, when do you need it?"></textarea>
             <span class="field-error" aria-live="polite">A sentence or two so I have something to go on.</span>
           </div>
+
+          <!-- Turnstile — invisible captcha; widget injects a hidden
+               cf-turnstile-response input into the form -->
+          {TURNSTILE_SITE_KEY && (
+            <>
+              <div class="cf-turnstile field-full" data-sitekey={TURNSTILE_SITE_KEY}></div>
+              <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+            </>
+          )}
 
           <!-- Form footer -->
           <div class="form-foot">
@@ -399,12 +409,15 @@ form.addEventListener('submit', async e => {
     } else {
       const topic  = hiddenI.value ?? '';
       const budget = (document.querySelector<HTMLInputElement>('.budget-chips input:checked'))?.value ?? '';
+      const turnstileToken =
+        form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '';
 
       const res = await fetch(form.action, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, topic, budget, message: msg }),
+        body: JSON.stringify({ name, email, topic, budget, message: msg, turnstileToken }),
       });
+      (window as any).turnstile?.reset();
       res.ok ? showSuccess() : showError();
     }
   } catch {

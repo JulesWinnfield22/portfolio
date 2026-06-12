@@ -134,9 +134,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 </style>
 
 <script>
-  if (localStorage.getItem('admin_token')) location.replace('/admin/messages');
+  const API = import.meta.env.PUBLIC_API_URL ?? 'https://api.abelteame.dev';
 
-  const API = 'https://api.abelteame.dev';
+  // auth lives in an httpOnly cookie — ask the backend if we're already signed in
+  localStorage.removeItem('admin_token');
+  fetch(`${API}/api/admin/me`, { credentials: 'include' })
+    .then(res => { if (res.ok) location.replace('/admin/messages'); })
+    .catch(() => {});
 
   const form       = document.getElementById('login-form')   as HTMLFormElement;
   const emailWrap  = document.getElementById('lf-email-wrap')!;
@@ -182,13 +186,13 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 
     try {
       const res  = await fetch(`${API}/api/admin/login`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email, password }),
+        method:      'POST',
+        headers:     { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body:        JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Invalid credentials');
-      localStorage.setItem('admin_token', data.token);
       location.replace('/admin/messages');
     } catch (err: any) {
       globalErr.textContent = err.message ?? 'Something went wrong.';

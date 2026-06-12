@@ -171,10 +171,18 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 </style>
 
 <script>
-  const API = 'https://api.abelteame.dev';
+  const API = import.meta.env.PUBLIC_API_URL ?? 'https://api.abelteame.dev';
 
-  const token = localStorage.getItem('admin_token');
-  if (!token) location.replace('/admin/login');
+  localStorage.removeItem('admin_token');
+
+  function esc(s: string) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 
   const elLoading = document.getElementById('am-loading')!;
   const elEmpty   = document.getElementById('am-empty')!;
@@ -221,7 +229,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       card.dataset.id = msg._id;
 
       const chips = [msg.topic, msg.budget].filter(Boolean).map(
-        v => `<span class="am-chip">${v}</span>`
+        v => `<span class="am-chip">${esc(v)}</span>`
       ).join('');
 
       card.innerHTML = `
@@ -229,16 +237,16 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
           <div class="am-sender">
             <div class="am-name">
               ${!msg.read ? '<span class="am-unread-dot"></span>' : ''}
-              ${msg.name}
+              ${esc(msg.name)}
             </div>
-            <a href="mailto:${msg.email}" class="am-email">${msg.email}</a>
+            <a href="mailto:${esc(encodeURIComponent(msg.email))}" class="am-email">${esc(msg.email)}</a>
           </div>
           <div class="am-meta">
             ${chips}
             <span class="am-date">${fmt(msg.createdAt)}</span>
           </div>
         </div>
-        <p class="am-message">${msg.message}</p>
+        <p class="am-message">${esc(msg.message)}</p>
         <div class="am-actions">
           ${!msg.read
             ? `<button class="am-action mark-read" data-id="${msg._id}">Mark read</button>`
@@ -254,9 +262,9 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
   async function load() {
     try {
       const res = await fetch(`${API}/api/admin/messages`, {
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include',
       });
-      if (res.status === 401) { localStorage.removeItem('admin_token'); location.replace('/admin/login'); return; }
+      if (res.status === 401) { location.replace('/admin/login'); return; }
       const data = await res.json();
       messages = data.messages ?? [];
 
@@ -281,7 +289,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       try {
         const res = await fetch(`${API}/api/admin/messages/${id}`, {
           method: 'PATCH',
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include',
         });
         if (res.ok) {
           const idx = messages.findIndex(m => m._id === id);
@@ -296,7 +304,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
       try {
         const res = await fetch(`${API}/api/admin/messages/${id}`, {
           method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include',
         });
         if (res.ok) {
           messages = messages.filter(m => m._id !== id);
