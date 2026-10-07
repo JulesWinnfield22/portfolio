@@ -6,6 +6,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
+import { initScrollFX } from './scroll';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -42,6 +43,7 @@ function initLenis(): void {
     smoothWheel: true,
   });
   lenis.on('scroll', () => ScrollTrigger.update());
+  (window as any).__lenis = lenis;
   gsap.ticker.add((time) => lenis!.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
 }
@@ -353,6 +355,34 @@ function initMarquee(root: Document | Element = document): void {
     marquee.addEventListener('mouseenter', () => gsap.to(marqueeTween!, { timeScale: 0, duration: 0.5 }));
     marquee.addEventListener('mouseleave', () => gsap.to(marqueeTween!, { timeScale: 1, duration: 0.5 }));
   }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // Scroll velocity drives skew + speed. Fast scrolling smears the strip;
+  // it settles back to baseline the moment the wheel stops.
+  const skewTo = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'power3' });
+  let settle: number | undefined;
+
+  ScrollTrigger.create({
+    trigger: document.documentElement,
+    start: 0,
+    end: 'max',
+    onUpdate: (self) => {
+      const v = self.getVelocity();
+      skewTo(gsap.utils.clamp(-14, 14, v / 260));
+      gsap.to(marqueeTween!, {
+        timeScale: gsap.utils.clamp(0.4, 5, 1 + Math.abs(v) / 1400),
+        duration: 0.4,
+        overwrite: true,
+      });
+
+      clearTimeout(settle);
+      settle = window.setTimeout(() => {
+        skewTo(0);
+        gsap.to(marqueeTween!, { timeScale: 1, duration: 0.8, overwrite: true });
+      }, 140);
+    },
+  });
 }
 
 // ── SCROLL REVEALS ────────────────────────────────────────────────
@@ -413,6 +443,7 @@ function initPageInteractions(container: Document | Element = document): void {
   initHoverThumb(container);
   initMarquee(container);
   initReveals(container);
+  initScrollFX(container);
 
   const attachCursorGrow = (window as any).__attachCursorGrow;
   if (typeof attachCursorGrow === 'function') attachCursorGrow(container);

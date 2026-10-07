@@ -1,0 +1,24 @@
+---
+/**
+ * Two stacked copies of the same words. The accent copy sits on top with a
+ * clip that opens left-to-right on scroll (initWipe in scroll.ts).
+ * The duplicate is aria-hidden so screen readers hear the line once.
+ */
+export interface Props {
+  text: string;
+  italic?: string;
+  tag?: 'h2' | 'h3';
+  class?: string;
+}
+
+const { text, italic = '', tag: Tag = 'h3', class: cls = '' } = Astro.props;
+---
+
+<Tag class={`wipe ${cls}`.trim()} data-wipe>
+  <span class="wipe-base">
+    {text}{italic && <span class="italic"> {italic}</span>}
+  </span>
+  <span class="wipe-fill" aria-hidden="true">
+    {text}{italic && <span class="italic"> {italic}</span>}
+  </span>
+</Tag>

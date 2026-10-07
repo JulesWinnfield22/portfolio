@@ -2,12 +2,15 @@
 import Layout from '../layouts/Layout.astro';
 import WorkRow from '../components/WorkRow.astro';
 import MiniContact from '../components/MiniContact.astro';
+import WipeHeading from '../components/WipeHeading.astro';
 
 const projects = [
-  { num: '01', name: 'FETAP',     italic: 'insurance platform',  tags: ['Insurance','Vue.js','Live'],      year: '25', thumb: 'FETAP — foreign employment assurance', thumbMeta: 'Insurance · 2025',   href: 'https://niscofetap.com',                                            image: '/assets/fetap.jpg'              },
-  { num: '02', name: 'Kenema',    italic: 'pharmacy platform',   tags: ['Healthcare','Vue.js','Live'],     year: '24', thumb: 'Kenema — pharmacy enterprise',         thumbMeta: 'Healthcare · 2024',  href: 'https://rx.kenemapharmacy.com',                                     image: '/assets/kenema.jpg'             },
-  { num: '03', name: 'Chinetlink',italic: 'logistics platform',  tags: ['Next.js','Current','Live'],       year: '26', thumb: 'Chinetlink — logistics platform',       thumbMeta: 'Logistics · 2026',   href: 'https://chinetlink.et/',                                            video: '/assets/chinetlink.webm' },
-  { num: '04', name: 'Modal-X',   italic: 'npm package',         tags: ['OSS','Vue + React','Published'],  year: '23', thumb: 'Modal-X — Vue & React modals',          thumbMeta: 'Open Source · 2023', href: 'https://www.npmjs.com/package/@customizer/modal-x?activeTab=readme', video: '/assets/videos/modal-x.webm'    },
+  { num: '01', name: 'ChiNet LinkTech', italic: 'company site & CMS',     tags: ['Next.js 16','Full-stack','Live'],   year: '26', thumb: 'ChiNet LinkTech — site & CMS',      thumbMeta: 'Next.js · 2026',      href: 'https://chinetlink.et/',        image: '/assets/chinetlink-collage.jpg' },
+  { num: '02', name: 'ChiNet Logistics',italic: 'logistics platform',     tags: ['React 19','TanStack','Live'],       year: '26', thumb: 'ChiNet — logistics platform',       thumbMeta: 'Logistics · 2026',    href: 'https://app.chinetlink.et/'                                      },
+  { num: '03', name: 'ChiNet TMS',      italic: 'Vue 3 rebuild',          tags: ['Vue 3','236K → 89K','Live'],        year: '26', thumb: 'ChiNet TMS — Vue 3 rebuild',        thumbMeta: 'Migration · 2026',    href: 'https://chinet-tms.et/',        video: '/assets/chinet-tms.webm' },
+  { num: '04', name: 'FETAP',           italic: 'insurance platform',     tags: ['Insurance','Vue.js','Live'],        year: '25', thumb: 'FETAP — foreign employment assurance', thumbMeta: 'Insurance · 2025', href: 'https://niscofetap.com',        image: '/assets/fetap.jpg'       },
+  { num: '05', name: 'Kenema',          italic: 'pharmacy platform',      tags: ['Healthcare','500+ components','Live'], year: '24', thumb: 'Kenema — pharmacy enterprise',   thumbMeta: 'Healthcare · 2024',   href: 'https://rx.kenemapharmacy.com', image: '/assets/kenema.jpg'      },
+  { num: '06', name: 'Modal-X',         italic: 'open-source modals',     tags: ['OSS','React + Vue 3','4,400+ dl'],  year: '23', thumb: 'Modal-X — React & Vue modals',      thumbMeta: 'Open Source · 2023',  href: 'https://www.npmjs.com/package/@customizer/modal-x?activeTab=readme', image: '/assets/modalx-collage.jpg' },
 ];
 ---
 
@@ -23,20 +26,20 @@ const projects = [
     <h1>Selected <span class="italic">work.</span></h1>
     <div class="ph-meta">
       <p class="lede">
-        Five projects from the last few years — picked for what they taught me.
+        Six projects from the last few years — picked for what they taught me.
         <span class="italic">Hover for a peek.</span>
       </p>
-      <div class="meta-right">
-        <b>2022 – 2025</b>04 selected · all in production
+      <div class="meta-right" data-parallax data-parallax-speed="0.16">
+        <b>2018 – 2026</b>06 selected · all in production
       </div>
     </div>
   </header>
 
   <!-- ── WORK LIST ──────────────────────────────────────────────── -->
   <section class="section wrap">
-    <div class="section-anchor">/ 01 selected work · 2022 – 2025</div>
+    <div class="section-anchor" data-parallax data-parallax-speed="0.1">/ 01 selected work · 2018 – 2026</div>
     <div class="meta" data-reveal>
-      <h2>Four projects, <span style="font-family:var(--serif);font-style:italic;color:var(--accent)">all real, all live.</span></h2>
+      <WipeHeading tag="h2" text="Six projects," italic="all real, all live." />
       <div class="label">Hover to preview</div>
     </div>
 
@@ -59,7 +62,8 @@ const projects = [
 
     <div class="work-cta" data-reveal>
       <p class="left">
-        There's also a Vue form validation library, a PWA chat app, and
+        There's also a React Native insurance app, a full-stack CMS for Marbarak Trading,
+        a zero-dependency form validation engine, and
         <span class="italic">at least one Joomla migration</span> I don't talk about.
       </p>
     </div>
@@ -75,35 +79,53 @@ const projects = [
     <div class="services" data-reveal-stagger>
       <div class="service">
         <span class="n">01.</span>
-        <h4>FETAP <span class="italic">— niscofetap.com</span></h4>
-        <p>Foreign Employment Term Assurance Platform for Nyala Insurance. The thing Ethiopian workers abroad use when they need insurance that follows them. Stakes: fairly high. Framework: Vue.</p>
+        <h4>ChiNet LinkTech <span class="italic">— chinetlink.et</span></h4>
+        <p>The company site and CMS, mine end to end — Next.js 16 App Router with React 19, about half the components rendered on the server. Prisma on MongoDB behind it, Better Auth sessions with role checks in middleware, and a Tiptap editor so staff publish without me.</p>
         <div class="deliv-wrap"><div class="deliv">
-          <span class="chip">Vue.js</span><span class="chip">Java Spring</span><span class="chip">MySQL</span>
+          <span class="chip">Next.js 16</span><span class="chip">Prisma</span><span class="chip">MongoDB</span><span class="chip">Better Auth</span>
         </div></div>
       </div>
 
       <div class="service">
         <span class="n">02.</span>
-        <h4>Kenema <span class="italic">— rx.kenemapharmacy.com</span></h4>
-        <p>Online platform for accessing medicines in Addis Ababa. Because sometimes you don't want to walk across town to find out a pharmacy is out of stock. Real inventory, real impact.</p>
+        <h4>ChiNet Logistics <span class="italic">— app.chinetlink.et</span></h4>
+        <p>Shippers, carriers, brokers, agents and admins in one platform, plus a freight marketplace — ~600 TypeScript files and 200+ routes. I wrote 384 of its ~550 commits. Socket.IO for live shipment tracking and chat, FCM push, Chapa checkout, Amharic/English, and an installable PWA.</p>
+        <div class="deliv-wrap"><div class="deliv">
+          <span class="chip">React 19</span><span class="chip">TanStack</span><span class="chip">Socket.IO</span><span class="chip">PWA</span>
+        </div></div>
+      </div>
+
+      <div class="service">
+        <span class="n">03.</span>
+        <h4>ChiNet TMS <span class="italic">— chinet-tms.et</span></h4>
+        <p>A legacy Vuex/Bootstrap/Vuetify/PrimeVue transport system rebuilt on Vue 3 in two weeks, reusing the React platform's architecture. 236K lines down to 89K — 62% smaller — while growing from 441 to 560 components, and runtime dependencies halved from 36 to 18 by collapsing three UI libraries into one Tailwind layer.</p>
+        <div class="deliv-wrap"><div class="deliv">
+          <span class="chip">Vue 3</span><span class="chip">TypeScript</span><span class="chip">Tailwind 4</span><span class="chip">Vitest</span>
+        </div></div>
+      </div>
+
+      <div class="service">
+        <span class="n">04.</span>
+        <h4>FETAP <span class="italic">— niscofetap.com</span></h4>
+        <p>Foreign Employment Term Assurance Platform for Nyala Insurance — the thing Ethiopian workers abroad use when they need insurance that follows them. Generated PDF policy documents took the manual processing errors out of it. Stakes: fairly high.</p>
         <div class="deliv-wrap"><div class="deliv">
           <span class="chip">Vue.js</span><span class="chip">Java Spring</span><span class="chip">MySQL</span>
         </div></div>
       </div>
 
       <div class="service">
-        <span class="n">03.</span>
-        <h4>Chinetlink <span class="italic">— chinetlink.et</span></h4>
-        <p>Logistics platform currently in production. Still actively shipping, which means the pride and the panic are both very fresh.</p>
+        <span class="n">05.</span>
+        <h4>Kenema <span class="italic">— rx.kenemapharmacy.com</span></h4>
+        <p>A 500+ component pharmacy system for getting medicines in Addis Ababa, because sometimes you don't want to walk across town to find out a branch is out of stock. Google Maps branch locations, PDF and Excel reporting, Ethiopian calendar dates, idle-session logout.</p>
         <div class="deliv-wrap"><div class="deliv">
-          <span class="chip">Next.js</span><span class="chip">Live</span><span class="chip">Current</span>
+          <span class="chip">Vue.js</span><span class="chip">Java Spring</span><span class="chip">MySQL</span>
         </div></div>
       </div>
 
       <div class="service">
-        <span class="n">04.</span>
+        <span class="n">06.</span>
         <h4>Modal-X <span class="italic">— npm · @customizer/modal-X</span></h4>
-        <p>A Vue (and React) plugin for file-based modal management. Published to npm because the built-in dialog API is, diplomatically, not great. Real people use it. Both of them seem happy.</p>
+        <p>File-based modal management for React and Vue, 4,400+ downloads in the last 18 months. A Vite plugin scans <code>.mdl.vue</code> and <code>.mdl.tsx</code> files and generates a typed registry, so modals open by name through a Promise-based API. Used across eight Medco products and ChiNet's apps — and yes, there's a VS Code extension too.</p>
         <div class="deliv-wrap"><div class="deliv">
           <a href="https://www.npmjs.com/package/@customizer/modal-x?activeTab=readme" target="_blank" rel="noopener" class="chip tappable">Vue version →</a>
           <a href="https://www.npmjs.com/package/@customizer/react-modal-x" target="_blank" rel="noopener" class="chip tappable">React version →</a>

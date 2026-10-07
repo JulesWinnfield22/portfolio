@@ -1,19 +1,69 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Marquee from '../components/Marquee.astro';
-import WorkRow from '../components/WorkRow.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import MiniContact from '../components/MiniContact.astro';
+import Reel from '../components/Reel.astro';
+import Cycler from '../components/Cycler.astro';
+import Statement from '../components/Statement.astro';
+import WipeHeading from '../components/WipeHeading.astro';
 
+// Every project gets a card on the landing page. `note` + no media renders
+// the placeholder treatment rather than a broken frame.
 const previewProjects = [
-  { num: '01', name: 'FETAP',      italic: 'insurance platform', tags: ['Insurance','Vue.js','Live'],  year: '25', thumb: 'FETAP — foreign employment assurance', thumbMeta: 'Insurance · 2025',  href: 'https://niscofetap.com',        image: '/assets/fetap.jpg'              },
-  { num: '02', name: 'Kenema',     italic: 'pharmacy platform',  tags: ['Healthcare','Vue.js','Live'], year: '24', thumb: 'Kenema — pharmacy enterprise',         thumbMeta: 'Healthcare · 2024', href: 'https://rx.kenemapharmacy.com', image: '/assets/kenema.jpg'             },
-  { num: '03', name: 'Chinetlink', italic: 'logistics platform', tags: ['Next.js','Current','Live'],   year: '26', thumb: 'Chinetlink — logistics platform',       thumbMeta: 'Logistics · 2026',  href: 'http://chinet-tms.et/',        video: '/assets/chinetlink.webm' },
+  {
+    num: '01', name: 'ChiNet LinkTech', italic: 'company site & CMS',
+    tags: ['Next.js 16', 'Prisma', 'Live'], year: '26',
+    href: 'https://chinetlink.et/',
+    image: '/assets/chinetlink-collage.jpg',
+    alt: 'Screens from the ChiNet LinkTech site and CMS.',
+  },
+  {
+    num: '02', name: 'ChiNet Logistics', italic: 'logistics platform',
+    tags: ['React 19', 'TanStack', 'Live'], year: '26',
+    href: 'https://app.chinetlink.et/',
+    note: 'Login-gated',
+  },
+  {
+    num: '03', name: 'ChiNet TMS', italic: 'Vue 3 rebuild',
+    tags: ['Vue 3', '236K → 89K', 'Live'], year: '26',
+    href: 'https://chinet-tms.et/',
+    image: '/assets/chinet-tms-still.jpg',
+    alt: 'The ChiNet TMS sign-in screen.',
+  },
+  {
+    num: '04', name: 'FETAP', italic: 'insurance platform',
+    tags: ['Insurance', 'Vue.js', 'Live'], year: '25',
+    href: 'https://niscofetap.com',
+    image: '/assets/fetap.jpg',
+    alt: 'The FETAP foreign employment assurance platform.',
+  },
+  {
+    num: '05', name: 'Kenema', italic: 'pharmacy platform',
+    tags: ['Healthcare', '500+ components', 'Live'], year: '24',
+    href: 'https://rx.kenemapharmacy.com',
+    image: '/assets/kenema.jpg',
+    alt: 'The Kenema pharmacy platform.',
+  },
+  {
+    num: '06', name: 'Modal-X', italic: 'open-source modals',
+    tags: ['OSS', 'React + Vue 3', '4,400+ dl'], year: '23',
+    href: 'https://www.npmjs.com/package/@customizer/modal-x?activeTab=readme',
+    image: '/assets/modalx-collage.jpg',
+    alt: 'Pages from the Modal-X documentation site.',
+  },
 ];
 ---
 
-<Layout title="Abel Teame — Software Developer" namespace="home" description="Software developer from Addis Ababa, Ethiopia. I build healthcare systems, insurance platforms, and logistics dashboards. Available for freelance and contract work.">
+<Layout
+  title="Abel Teame — Senior Full-Stack Engineer"
+  namespace="home"
+  description="Senior full-stack engineer in Addis Ababa, Ethiopia. Next.js, React 19, Node.js and TypeScript — logistics platforms, pharmacy systems and insurance software in production. Available for freelance and contract work."
+  preloads={[{ href: '/assets/chinetlink-collage-wide.jpg', as: 'image' }]}
+>
 
   <!-- ── HERO ──────────────────────────────────────────────────── -->
+  <!-- Each row here leaves at its own speed on scroll — initHeroScroll() -->
   <header class="hero wrap" id="top">
 
     <div class="hero-status hero-load d1">
@@ -41,8 +91,8 @@ const previewProjects = [
 
     <div class="hero-bottom hero-load d3">
       <p class="hero-tagline">
-        Software developer based in Addis Ababa. I build web apps,
-        tools, and platforms — a lot of it in health, insurance, and logistics,
+        Senior full-stack engineer based in Addis Ababa. Five years of
+        Next.js, React and TypeScript shipped into logistics, healthcare and insurance —
         <span class="acc">but not limited to any one domain.</span>
         If it ships to production and real people use it, that's the work I want.
       </p>
@@ -60,44 +110,87 @@ const previewProjects = [
   <!-- ── MARQUEE ────────────────────────────────────────────────── -->
   <Marquee />
 
+  <!-- ── REEL ───────────────────────────────────────────────────── -->
+  <!-- Opens from an inset panel to full bleed as you scroll past it -->
+  <Reel
+    index="00"
+    label="On screen now"
+    items={[
+      {
+        image: '/assets/chinetlink-collage-wide.jpg',
+        imageMobile: '/assets/chinetlink-collage-portrait.jpg',
+        alt: 'Screens from the ChiNet LinkTech site and CMS, stacked.',
+        meta: 'ChiNet LinkTech · site & CMS · Next.js 16 · 2026',
+        caption: 'Software that ships',
+        italic: 'and then stays shipped.',
+      },
+      {
+        image: '/assets/chinet-tms-still.jpg',
+        alt: 'The ChiNet TMS sign-in screen.',
+        meta: 'ChiNet TMS · Vue 3 rebuild · 2026',
+        caption: '236K lines in,',
+        italic: '89K lines out.',
+      },
+      {
+        image: '/assets/modalx-collage-wide.jpg',
+        alt: 'Pages from the Modal-X documentation site, stacked.',
+        meta: 'Modal-X · open source · 4,400+ downloads',
+        caption: 'Name a file.',
+        italic: 'Await a modal.',
+      },
+    ]}
+  />
+
   <!-- ── SELECTED WORK PREVIEW ─────────────────────────────────── -->
-  <section class="home-preview wrap">
+  <section class="home-preview wrap" data-chapter="work" id="work">
     <div class="pv-head" data-reveal>
       <div>
-        <div class="label">/ selected work · '23–'25</div>
-        <h3>Three projects, <span class="italic">all in production.</span></h3>
+        <div class="label" data-parallax data-parallax-speed="0.1">/ selected work · '23–'26</div>
+        <WipeHeading text="Six projects," italic="all in production." />
       </div>
-      <a href="/work" data-route="work" class="see-all tappable">See all 05 →</a>
+      <a href="/work" data-route="work" class="see-all tappable">Full write-ups →</a>
     </div>
 
-    <div class="work-list" data-reveal-stagger>
+    <div class="project-grid" data-reveal-stagger>
       {previewProjects.map((p) => (
-        <WorkRow
+        <ProjectCard
           num={p.num}
           name={p.name}
           italic={p.italic}
           tags={p.tags}
           year={p.year}
-          thumb={p.thumb}
-          thumbMeta={p.thumbMeta}
           href={p.href}
-          video={p.video}
           image={p.image}
+          video={p.video}
+          alt={p.alt}
+          note={p.note}
         />
       ))}
     </div>
+
   </section>
 
+  <!-- ── CYCLER ─────────────────────────────────────────────────── -->
+  <Cycler
+    kicker="What if the next thing you shipped was built on…"
+    words={['CLARITY', 'SPEED', 'CARE', 'EVIDENCE']}
+    footnote="[ pick any three · I will argue for all four ]"
+  />
+
+  <!-- ── STATEMENT ──────────────────────────────────────────────── -->
+  <Statement />
+
   <!-- ── ABOUT TEASER ───────────────────────────────────────────── -->
-  <section class="home-about wrap" data-reveal>
-    <div class="left">
+  <section class="home-about wrap" data-chapter="about" id="about">
+    <div class="left" data-parallax data-parallax-speed="0.14">
       / about · the person
-      <b>Abel Teame, engineer<br>Addis Ababa · since 2019</b>
+      <b>Abel Teame, engineer<br>Addis Ababa · since 2018</b>
     </div>
     <div class="right">
-      <h3>
-        I build across domains — most of my production work has been in health,
-        insurance, and logistics, but I'm not locked into any one vertical.
+      <h3 data-highlight>
+        I take full ownership and deliver on time — sole developer on ChiNet's
+        Next.js site and CMS, rebuilt a 236K-line legacy system in two weeks, and led a
+        team of three whose government and enterprise platforms are still in production.
         <span class="italic">Good problems are good problems.</span>
       </h3>
       <a href="/about" data-route="about" class="more tappable">Read more →</a>
@@ -121,7 +214,7 @@ const previewProjects = [
           <span class="m">2026 · 9 min · Vue · Migration</span>
         </a>
       </div>
-      <div class="home-cv">
+      <div class="home-cv" data-parallax data-parallax-speed="0.12">
         <p>Prefer a PDF?</p>
         <a href="/abel_teame_cv.pdf" download class="about-cv-link tappable">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">

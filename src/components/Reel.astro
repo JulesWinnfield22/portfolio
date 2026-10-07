@@ -1,0 +1,80 @@
+---
+/**
+ * Scroll-driven reel. Opens from an inset rounded panel to full bleed, then
+ * cycles through each project — image and caption cross-fading together.
+ * Driven by initReel() in scroll.ts.
+ *
+ * Section height scales with the number of slides via --reel-slides, so the
+ * choreography stays the same whether there are two projects or six.
+ */
+export interface ReelItem {
+  /** Wide still. Needs to be >=1600px — this runs full-bleed. */
+  image: string;
+  /** Optional portrait variant; a wide still crops to a sliver on a phone. */
+  imageMobile?: string;
+  alt?: string;
+  meta: string;
+  caption: string;
+  italic?: string;
+}
+
+export interface Props {
+  items: ReelItem[];
+  index?: string;
+  label?: string;
+}
+
+const { items, index = '00', label = 'On screen now' } = Astro.props;
+---
+
+<section
+  class="reel"
+  data-reel
+  data-chapter="reel"
+  id="reel"
+  style={`--reel-slides:${items.length}`}
+>
+  <div class="reel-sticky">
+    <div class="reel-frame">
+
+      <div class="reel-slides">
+        {items.map((it, i) => (
+          <div class="reel-slide" data-slide={i}>
+            <picture>
+              {it.imageMobile && <source media="(max-width: 720px)" srcset={it.imageMobile} />}
+              <img
+                src={it.image}
+                alt={it.alt ?? ''}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </picture>
+          </div>
+        ))}
+      </div>
+
+      <div class="reel-veil" aria-hidden="true"></div>
+
+      <div class="reel-hud" aria-hidden="true">
+        <span class="reel-tag">[ {index} · {label} ]</span>
+        <span class="reel-tag reel-tag-r"><span class="rec"></span> rolling</span>
+      </div>
+
+      <div class="reel-captions">
+        {items.map((it, i) => (
+          <div class="reel-caption" data-caption={i}>
+            <span class="reel-meta">{it.meta}</span>
+            <h2 class="reel-title">
+              {it.caption}{it.italic && <> <span class="italic">{it.italic}</span></>}
+            </h2>
+          </div>
+        ))}
+      </div>
+
+      <div class="reel-dots" aria-hidden="true">
+        {items.map(() => <span class="reel-dot"></span>)}
+      </div>
+
+    </div>
+  </div>
+</section>

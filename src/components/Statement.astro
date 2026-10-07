@@ -1,0 +1,71 @@
+---
+/**
+ * Full-bleed accent colour field with a drifting blob and two columns of
+ * dense mono "credits" that parallax in opposite directions.
+ * Driven by initStatement() in scroll.ts.
+ */
+export interface Props {
+  label?: string;
+  lead?: string;
+  italic?: string;
+  trail?: string;
+  note?: string;
+  left?: string[];
+  right?: string[];
+}
+
+const {
+  label  = '[ what I actually do ]',
+  lead   = "I'M A SENIOR FULL-STACK ENGINEER SHIPPING",
+  italic = 'production',
+  trail  = 'SOFTWARE FROM ADDIS ABABA',
+  note   = '— Because software that nobody uses is just a very expensive opinion.',
+  left = [
+    '[01] NEXT.JS 16 · APP ROUTER · RSC',
+    '[02] REACT 19 · REACT COMPILER',
+    '[03] TYPESCRIPT · STRICT',
+    '[04] NODE · EXPRESS · NESTJS',
+    '[05] PRISMA · POSTGRES · MONGODB',
+    '[06] TANSTACK QUERY · FORM · ROUTER',
+    '[07] TAILWIND · SHADCN/UI',
+    '[08] VITEST · PLAYWRIGHT',
+    '[09] DOCKER · PM2 · CI/CD',
+    '[10] VUE 3 · NUXT · ALSO SHIPS',
+  ],
+  right = [
+    'CHINETLINK CMS · NEXT.JS 16 · 2026',
+    'LOGISTICS PLATFORM · 600+ TS FILES',
+    'TMS REBUILD · 236K → 89K LINES',
+    'KENEMA · 500+ COMPONENT PHARMACY',
+    'FETAP · NYALA INSURANCE · 2025',
+    'MODAL-X · 4,400+ NPM DOWNLOADS',
+    'TEAM LEAD · 3 DEVELOPERS',
+    'CLAUDE CODE · DAILY DRIVER',
+    'ADDIS ABABA · UTC+3',
+    '5+ YEARS IN PRODUCTION',
+  ],
+} = Astro.props;
+---
+
+<section class="statement" data-statement data-chapter="statement" id="statement">
+  <div class="statement-blob" aria-hidden="true"></div>
+
+  <div class="statement-inner">
+    <span class="statement-label">{label}</span>
+    <h2 class="statement-head">
+      <span class="reg">&reg;</span>{lead}
+      <span class="italic">{italic}</span>
+      {trail}
+    </h2>
+    <p class="statement-note">{note}</p>
+
+    <div class="statement-rails" aria-hidden="true">
+      <ul class="statement-credits">
+        {left.map((l) => <li>{l}</li>)}
+      </ul>
+      <ul class="statement-credits statement-credits-r">
+        {right.map((l) => <li>{l}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>

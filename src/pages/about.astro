@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import MiniContact from '../components/MiniContact.astro';
 ---
 
-<Layout title="About · Abel Teame" namespace="about" description="About Abel Teame. Six years shipping healthcare systems, insurance platforms, and logistics software in Ethiopia. Not limited to any one domain." preloads={[{ href: '/assets/portrait-opt.jpg', as: 'image' }]}>
+<Layout title="About · Abel Teame" namespace="about" description="About Abel Teame. Five-plus years shipping logistics platforms, healthcare systems and insurance software in Ethiopia with Next.js, React and TypeScript. Not limited to any one domain." preloads={[{ href: '/assets/portrait-opt.jpg', as: 'image' }]}>
 
   <!-- ── PAGE HEADER ───────────────────────────────────────────── -->
   <header class="page-header wrap" data-reveal>
@@ -15,13 +15,13 @@ import MiniContact from '../components/MiniContact.astro';
     <h1>Not a <span class="italic">typical</span> origin story.</h1>
     <div class="ph-meta">
       <p class="lede">
-        Software developer from Addis Ababa. I build web apps and platforms
-        across different domains — a lot of it has been in health, insurance, and logistics,
+        Senior full-stack engineer from Addis Ababa. I build web apps and platforms
+        across different domains — a lot of it has been in logistics, health, and insurance,
         but I'm not domain-specific.
         <span class="italic">If it's real work that real people use, I'm interested.</span>
       </p>
-      <div class="meta-right">
-        <b>Abel Teame</b>Software Developer · Addis Ababa · UTC+3
+      <div class="meta-right" data-parallax data-parallax-speed="0.16">
+        <b>Abel Teame</b>Senior Full-Stack Engineer · Addis Ababa · UTC+3
       </div>
     </div>
   </header>
@@ -30,11 +30,11 @@ import MiniContact from '../components/MiniContact.astro';
   <section class="section wrap">
     <div class="section-anchor">/ 02 about</div>
     <div class="about" data-reveal>
-      <div class="about-photo">
+      <div class="about-photo" data-parallax data-parallax-speed="0.2">
         <div class="badge">→ the<br>person<br>behind it ←</div>
       </div>
       <div class="about-copy">
-        <h3>
+        <h3 data-highlight>
           I came to computers late, dropped out of college, and spent a good while
           not being particularly good at anything.
           <span class="italic">A friend suggested I try software. That was the whole turning point.</span>
@@ -45,24 +45,36 @@ import MiniContact from '../components/MiniContact.astro';
           like I'm in the right place, and I've been building ever since.
         </p>
         <p>
-          Six years in, I've shipped insurance platforms, pharmacy systems, logistics
+          Five-plus years in, I've shipped insurance platforms, pharmacy systems, logistics
           dashboards, component libraries, and a few things that don't fit a neat category.
-          A lot of it has been in high-stakes Ethiopian enterprise — but that's context,
-          not a constraint.
+          These days it's mostly Next.js and React 19 — sole developer on ChiNet's site and CMS,
+          384 of ~550 commits on their logistics platform, and a 236K-line legacy system
+          rebuilt on Vue 3 in two weeks. A lot of it has been high-stakes Ethiopian
+          enterprise — but that's context, not a constraint.
           <span class="italic">I'll build whatever's worth building.</span>
         </p>
         <dl class="about-stack">
           <dt>Stack</dt>
           <dd>
-            <span class="chip">Vue.js</span>
-            <span class="chip">React</span>
+            <span class="chip">Next.js 16</span>
+            <span class="chip">React 19</span>
             <span class="chip">TypeScript</span>
             <span class="chip">Node.js</span>
-            <span class="chip">Elixir</span>
-            <span class="chip">Kotlin</span>
-            <span class="chip">MySQL</span>
+            <span class="chip">Prisma</span>
+            <span class="chip">TanStack</span>
+            <span class="chip">Tailwind</span>
+            <span class="chip">Vue 3</span>
             <span class="chip">PostgreSQL</span>
+            <span class="chip">MongoDB</span>
+            <span class="chip">Docker</span>
             <span class="chip">etc.</span>
+          </dd>
+          <dt>Also in the loop</dt>
+          <dd>
+            <span class="chip">Claude Code, daily</span>
+            <span class="chip">CLAUDE.md project rules</span>
+            <span class="chip">MCP servers</span>
+            <span class="chip">Vitest + Playwright</span>
           </dd>
           <dt>I care about</dt>
           <dd>
@@ -106,13 +118,13 @@ import MiniContact from '../components/MiniContact.astro';
     <div class="services" data-reveal-stagger>
       <div class="service">
         <span class="n">A.</span>
-        <h4>Frontend apps <span class="italic">— Vue or React</span></h4>
-        <p>Dynamic, responsive UIs that actually perform. Component-driven from the start, so the codebase doesn't become a haunted house six months later.</p>
+        <h4>Full-stack apps <span class="italic">— Next.js end to end</span></h4>
+        <p>Architecture to production: App Router and Server Components on the front, Prisma data models, auth and Docker deployments behind them. Component-driven from the start, so the codebase doesn't become a haunted house six months later.</p>
         <div class="deliv-wrap">
           <div class="deliv">
-            <span class="chip">Vue.js</span>
-            <span class="chip">React</span>
-            <span class="chip">TypeScript</span>
+            <span class="chip">Next.js 16</span>
+            <span class="chip">React 19</span>
+            <span class="chip">Prisma</span>
             <span class="chip">TanStack</span>
           </div>
         </div>

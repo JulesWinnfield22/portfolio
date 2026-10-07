@@ -1,0 +1,36 @@
+---
+/**
+ * Pinned word swap. Outer section is tall; the sticky child holds every
+ * word stacked in one place and initCycler() blur-swaps between them as
+ * the section scrolls past.
+ */
+export interface Props {
+  kicker?: string;
+  words?: string[];
+  footnote?: string;
+}
+
+const {
+  kicker   = 'What if the next thing you shipped was built on…',
+  words    = ['CLARITY', 'SPEED', 'CARE', 'EVIDENCE'],
+  footnote = '[ pick any three · I will argue for all four ]',
+} = Astro.props;
+---
+
+<section class="cycler" data-cycler data-chapter="idea" id="idea">
+  <div class="cycler-sticky">
+    <p class="cycler-kicker">{kicker}</p>
+
+    <div class="cycler-stage" aria-label={words.join(', ')}>
+      {words.map((w) => (
+        <span class="cycler-word">{w}</span>
+      ))}
+    </div>
+
+    <div class="cycler-dots" aria-hidden="true">
+      {words.map(() => <span class="cycler-dot"></span>)}
+    </div>
+
+    <p class="cycler-foot">{footnote}</p>
+  </div>
+</section>

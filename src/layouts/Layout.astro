@@ -10,9 +10,9 @@ export interface Props {
 import '../styles/global.css';
 
 const {
-  title = 'Abel Teame — Software Developer',
+  title = 'Abel Teame — Senior Full-Stack Engineer',
   namespace = 'home',
-  description = 'Software developer based in Addis Ababa. I build web apps, platforms, and tools across health, insurance, and logistics. Available for freelance and contract work.',
+  description = 'Senior full-stack engineer based in Addis Ababa. Next.js, React 19, Node.js and TypeScript across logistics, healthcare and insurance. Available for freelance and contract work.',
   ogImage = '/og.png',
   preloads = [],
 } = Astro.props;
@@ -33,6 +33,16 @@ const drawerLinks = [
   { href: '/about',   route: 'about',   num: '02', label: 'About.',                   italic: ''        },
   { href: '/words',   route: 'words',   num: '03', label: '',                          italic: 'Words'   , labelAfter: ' & notes.' },
   { href: '/contact', route: 'contact', num: '04', label: '',                          italic: 'Hi.'     },
+];
+
+// Bottom rail anchors — only rendered on pages that have [data-chapter]
+// sections; scroll.ts removes the rail when it finds none.
+const chapters = [
+  { id: 'reel',      label: 'Reel'      },
+  { id: 'work',      label: 'Work'      },
+  { id: 'idea',      label: 'Idea'      },
+  { id: 'statement', label: 'Stack'     },
+  { id: 'about',     label: 'About'     },
 ];
 
 const overlayTitles: Record<string, string> = {
@@ -81,12 +91,13 @@ const overlayTitles: Record<string, string> = {
     "name": "Abel Teame",
     "url": "https://abelteame.dev",
     "email": "hello@abelteame.dev",
-    "jobTitle": "Software Developer",
+    "jobTitle": "Senior Full-Stack Engineer",
     "description": description,
-    "knowsAbout": ["Vue.js","React","TypeScript","Node.js","Elixir","Kotlin"],
+    "knowsAbout": ["Next.js","React","TypeScript","Node.js","Prisma","Vue.js","Tailwind CSS","PostgreSQL","MongoDB"],
+    "alumniOf": "Microlink Information Technology and Business College",
     "sameAs": [
       "https://github.com/JulesWinnfield22",
-      "https://www.linkedin.com/in/abel-teame-2218a1209/"
+      "https://www.linkedin.com/in/abelteame/"
     ]
   })} />
   {preloads.map((p: { href: string; as: string; type?: string }) => (
@@ -98,6 +109,9 @@ const overlayTitles: Record<string, string> = {
   <!-- global.css injected by Astro via frontmatter import -->
   <!-- run before first paint: if arriving via transition, cover panels immediately -->
   <script is:inline>
+    // Scroll-built elements start hidden, but only when JS is actually
+    // running to un-hide them — otherwise they'd be invisible for good.
+    document.documentElement.classList.add('js');
     if (sessionStorage.getItem('ot-ns')) {
       document.documentElement.classList.add('is-transitioning');
     }
@@ -112,6 +126,18 @@ const overlayTitles: Record<string, string> = {
   const _t = localStorage.getItem('ot-theme');
   if (_t) document.body.dataset.theme = _t;
 </script>
+
+<!-- ── Scroll progress rail ─────────────────────────────────────── -->
+<div class="progress" aria-hidden="true"><div class="progress-bar" id="progress-bar"></div></div>
+
+<!-- ── Ambient field ────────────────────────────────────────────────
+     Fixed behind everything. Each blob drifts on scroll + leans toward
+     the pointer (initAmbient in scroll.ts). -->
+<div class="ambient" id="ambient" aria-hidden="true">
+  <span class="ambient-blob b1"></span>
+  <span class="ambient-blob b2"></span>
+  <span class="ambient-blob b3"></span>
+</div>
 
 <!-- ── Logo sprite ──────────────────────────────────────────────── -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -158,7 +184,7 @@ const overlayTitles: Record<string, string> = {
     </span>
     <span>
       Abel Teame<br>
-      <span style="color:var(--muted)">Engineer · 2026</span>
+      <span style="color:var(--muted)">Full-Stack · 2026</span>
     </span>
   </a>
   <div class="nav-links">
@@ -236,7 +262,7 @@ const overlayTitles: Record<string, string> = {
     </a>
     <div class="drawer-socials">
       <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="tappable">github</a>
-      <a href="https://www.linkedin.com/in/abel-teame-2218a1209/" target="_blank" rel="noopener" class="tappable">linkedin</a>
+      <a href="https://www.linkedin.com/in/abelteame/" target="_blank" rel="noopener" class="tappable">linkedin</a>
     </div>
   </div>
 </div>
@@ -248,12 +274,21 @@ const overlayTitles: Record<string, string> = {
   </main>
 </div>
 
+<!-- ── Chapter rail ─────────────────────────────────────────────── -->
+<nav class="chapters" id="chapters" aria-label="Page sections">
+  <span class="chapters-mark" aria-hidden="true"><svg><use href="#logo-at"/></svg></span>
+  {chapters.map(({ id, label }) => (
+    <a href={`#${id}`} class="chapter-link" data-chapter-link={id}>{label}</a>
+  ))}
+  <a href="/contact" class="chapter-cta tappable">Let's talk &rarr;</a>
+</nav>
+
 <!-- ── Footer ───────────────────────────────────────────────────── -->
 <footer class="footer">
   <div>© 2026 Abel Teame · all rights, mostly</div>
   <div class="socials">
     <a href="https://github.com/JulesWinnfield22" target="_blank" rel="noopener" class="tappable">github</a>
-    <a href="https://www.linkedin.com/in/abel-teame-2218a1209/" target="_blank" rel="noopener" class="tappable">linkedin</a>
+    <a href="https://www.linkedin.com/in/abelteame/" target="_blank" rel="noopener" class="tappable">linkedin</a>
     <a href="mailto:hello@abelteame.dev" class="tappable">email</a>
   </div>
   <div class="colophon">

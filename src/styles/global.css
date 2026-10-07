@@ -2089,3 +2089,626 @@ body.menu-open .drawer-link { opacity: 1; transform: translateY(0); }
 }
 .drawer-socials a { color: var(--muted); transition: color .2s; }
 .drawer-socials a:hover { color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLL CINEMA
+   Everything below is driven by src/scripts/scroll.ts. The CSS here only
+   sets the resting state — GSAP owns every transform once it boots.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── SCROLL PROGRESS RAIL ────────────────────────────────────────── */
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 60;
+  pointer-events: none;
+  background: var(--rule);
+}
+.progress-bar {
+  height: 100%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 45%, var(--ink)));
+}
+
+/* ── AMBIENT FIELD ───────────────────────────────────────────────── */
+/* Sits under .wrap (z-index 2) and the grain (z-index 1). */
+.ambient {
+  position: fixed;
+  inset: -20vmax;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+.ambient-blob {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+}
+.ambient-blob.b1 {
+  width: 58vmax; height: 58vmax;
+  top: -6vmax; left: -10vmax;
+  background: radial-gradient(circle at 50% 50%, var(--accent), transparent 68%);
+  opacity: .16;
+}
+.ambient-blob.b2 {
+  width: 50vmax; height: 50vmax;
+  top: 28vmax; right: -12vmax;
+  background: radial-gradient(circle at 50% 50%, #2f6bff, transparent 68%);
+  opacity: .13;
+}
+.ambient-blob.b3 {
+  width: 42vmax; height: 42vmax;
+  bottom: -8vmax; left: 26vmax;
+  background: radial-gradient(circle at 50% 50%, #18c29c, transparent 70%);
+  opacity: .09;
+}
+body[data-theme="light"] .ambient-blob.b1 { opacity: .20; }
+body[data-theme="light"] .ambient-blob.b2 { opacity: .12; }
+body[data-theme="light"] .ambient-blob.b3 { opacity: .10; }
+
+/* ── EXPANDING REEL ──────────────────────────────────────────────── */
+.reel {
+  position: relative;
+  /* opening + one window per slide (set by the component as --reel-slides) */
+  height: calc(130vh + var(--reel-slides, 1) * 76vh);
+  z-index: 2;
+}
+.reel-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+.reel-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* resting state for no-JS / pre-boot — GSAP re-measures this in px */
+  clip-path: inset(17vh 16vw round 26px);
+  background: var(--bg-2);
+}
+.reel-slides {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.22);          /* GSAP eases this to 1 as the frame opens */
+  will-change: transform;
+}
+.reel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.reel-slide picture { display: contents; }
+.reel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* first slide visible before JS boots, so the panel is never empty */
+.reel-slide[data-slide="0"] { opacity: 1; }
+
+.reel-captions { position: absolute; inset: 0; pointer-events: none; }
+.reel-veil {
+  position: absolute;
+  inset: 0;
+  /* Captions sit over whatever the slide happens to be, and some stills have
+     their own baked-in headline in the same corner. A stronger, taller bottom
+     scrim means the caption always wins. */
+  background:
+    linear-gradient(to top,
+      rgba(8,8,6,.94) 0%,
+      rgba(8,8,6,.72) 22%,
+      rgba(8,8,6,.34) 44%,
+      rgba(8,8,6,.08) 62%,
+      rgba(8,8,6,.44) 100%);
+}
+.reel-hud {
+  position: absolute;
+  top: 22px; left: 24px; right: 24px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.72);
+}
+.reel-tag-r { display: inline-flex; align-items: center; gap: 7px; }
+.reel-tag-r .rec {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.6s var(--ease) infinite;
+}
+.reel-caption {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: clamp(48px, 9vh, 96px);
+  color: #f4f2ee;
+  opacity: 0;
+}
+
+/* slide position indicator, bottom-right */
+.reel-dots {
+  position: absolute;
+  right: var(--pad-x);
+  bottom: clamp(48px, 9vh, 96px);
+  display: flex;
+  gap: 7px;
+}
+.reel-dot {
+  width: 18px;
+  height: 2px;
+  background: rgba(244,242,238,.3);
+  transition: background .35s var(--ease), width .35s var(--ease);
+}
+.reel-dot.is-on { background: var(--accent); width: 30px; }
+@media (max-width: 720px) { .reel-dots { display: none; } }
+
+.reel-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(244,242,238,.6);
+}
+.reel-title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(34px, 6.4vw, 104px);
+  line-height: .94;
+  letter-spacing: -.035em;
+  margin: 14px 0 0;
+  max-width: 16ch;
+}
+.reel-title .italic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+@media (max-width: 720px) {
+  .reel { height: calc(100vh + var(--reel-slides, 1) * 70vh); }
+  .reel-frame { clip-path: inset(10vh 6vw round 18px); }
+  /* 16:10 footage in a portrait frame crops hard — bias the window toward
+     the left of the shot, where the subject is, instead of dead centre.
+     Video only: stills swap to a square source at this width instead. */
+  .reel-slide img { object-position: center; }
+  .reel-title { font-size: clamp(30px, 9vw, 54px); max-width: 12ch; }
+}
+
+/* ── PINNED CYCLER ───────────────────────────────────────────────── */
+.cycler {
+  position: relative;
+  height: 320vh;
+  z-index: 2;
+}
+.cycler-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  padding: 0 var(--pad-x);
+  text-align: center;
+}
+.cycler-kicker {
+  font-family: var(--mono);
+  font-size: clamp(10.5px, 1.1vw, 13px);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+.cycler-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: clamp(70px, 13vw, 190px);
+}
+.cycler-word {
+  grid-area: 1 / 1;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(38px, 10.5vw, 176px);
+  line-height: 1;
+  letter-spacing: -.045em;
+  color: var(--ink);
+  white-space: nowrap;
+  will-change: transform, filter, opacity;
+}
+.cycler-dots { display: flex; gap: 9px; }
+.cycler-dot {
+  width: 20px; height: 2px;
+  background: var(--rule-strong);
+  transition: background .35s var(--ease), width .35s var(--ease);
+}
+.cycler-dot.is-on { background: var(--accent); width: 34px; }
+.cycler-foot {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+@media (max-width: 720px) { .cycler { height: 260vh; } }
+
+/* ── WIPE HEADINGS ───────────────────────────────────────────────── */
+.wipe { position: relative; display: block; }
+.wipe-base { color: var(--ink-2); }
+.wipe-fill {
+  position: absolute;
+  inset: 0;
+  color: var(--accent);
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+}
+.wipe .italic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ── WORD-BY-WORD HIGHLIGHT ──────────────────────────────────────── */
+/* Hidden until SplitText has run, so a half-split line never flashes.
+   Scoped to html.js so the copy still renders if the bundle never lands. */
+html.js [data-highlight] { visibility: hidden; }
+html.js [data-highlight].hl-ready { visibility: visible; }
+.hl-word { will-change: opacity; }
+
+/* ── STATEMENT COLOUR FIELD ──────────────────────────────────────── */
+.statement {
+  position: relative;
+  z-index: 2;
+  background: var(--accent);
+  color: #120a05;
+  overflow: hidden;
+  padding: clamp(110px, 18vh, 220px) var(--pad-x);
+  isolation: isolate;
+}
+.statement-blob {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 72vmax; height: 72vmax;
+  margin: -36vmax 0 0 -36vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(18,10,5,.42), transparent 62%);
+  filter: blur(40px);
+  z-index: -1;
+  will-change: transform;
+}
+/* A credits band under the headline. These used to float in the side
+   margins, but at any realistic width a 7vw headline and two 195px
+   columns cannot share a row without colliding. */
+.statement-rails {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: clamp(44px, 7vh, 88px);
+  padding-top: clamp(24px, 4vh, 40px);
+  border-top: 1px solid rgba(18,10,5,.22);
+  pointer-events: none;
+}
+.statement-credits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 2.1;
+  letter-spacing: .1em;
+  color: rgba(18,10,5,.46);
+  will-change: transform;
+}
+.statement-credits-r { text-align: right; }
+.statement-inner { position: relative; max-width: 1400px; margin: 0 auto; }
+.statement-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(18,10,5,.62);
+}
+.statement-head {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(34px, 7.2vw, 128px);
+  line-height: .92;
+  letter-spacing: -.045em;
+  text-transform: uppercase;
+  margin: 22px 0 0;
+  text-wrap: balance;
+}
+.statement-head .reg {
+  font-size: .32em;
+  vertical-align: super;
+  font-weight: 500;
+  margin-right: .1em;
+}
+.statement-head .italic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: -.01em;
+}
+.statement-note {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+  letter-spacing: .04em;
+  color: rgba(18,10,5,.66);
+  max-width: 46ch;
+  margin: clamp(32px, 5vh, 56px) 0 0;
+}
+@media (max-width: 620px) {
+  .statement-credits-r { display: none; }
+  .statement-rails { gap: 0; }
+}
+
+/* ── CHAPTER RAIL ────────────────────────────────────────────────── */
+.chapters {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 140%);
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 7px 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: color-mix(in oklab, var(--bg) 72%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  /* visibility (not just opacity) keeps the links out of the tab order
+     while the rail is parked below the fold */
+  visibility: hidden;
+  opacity: 0;
+  transition: transform .55s var(--ease-out), opacity .4s var(--ease), visibility .4s;
+}
+.chapters.is-on {
+  visibility: visible;
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.chapters-mark {
+  width: 13px; height: 13px;
+  color: var(--accent);
+  margin-right: 6px;
+  animation: spin 9s linear infinite;
+}
+.chapters-mark svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.chapter-link {
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: var(--muted);
+  transition: color .25s var(--ease), background .25s var(--ease);
+}
+.chapter-link:hover { color: var(--ink); }
+.chapter-link.is-on { color: var(--ink); background: var(--bg-3); }
+.chapter-cta {
+  padding: 7px 13px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #0c0c0a;
+  font-weight: 600;
+  white-space: nowrap;
+}
+body.menu-open .chapters { opacity: 0; visibility: hidden; }
+@media (max-width: 720px) {
+  .chapters { gap: 0; padding: 6px 6px 6px 10px; font-size: 9.5px; }
+  .chapter-link { padding: 6px 8px; letter-spacing: .08em; }
+  .chapter-cta { display: none; }
+}
+@media (max-width: 420px) {
+  .chapters-mark { display: none; }
+}
+
+/* ── MOTION PREFERENCES ──────────────────────────────────────────── */
+/* GSAP already short-circuits in scroll.ts; this covers the CSS-only
+   loops and leaves every scroll-built element in its finished state. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  .reel { height: auto; }
+  .reel-sticky { position: relative; height: 72vh; }
+  .reel-frame { clip-path: none; }
+  .reel-slides { transform: none; }
+  .reel-slide { opacity: 0; }
+  .reel-slide[data-slide="0"] { opacity: 1; }
+  .reel-caption[data-caption="0"] { opacity: 1; }
+  .cycler { height: auto; }
+  .cycler-sticky { position: relative; height: auto; padding: var(--pad-section) var(--pad-x); }
+  .cycler-stage { min-height: 0; }
+  .wipe-fill { clip-path: inset(0 0 0 0); }
+}
+
+/* ── PROJECT CARDS (home grid) ───────────────────────────────────── */
+/* The work page keeps hover-rows; the landing page shows the work outright. */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: 40px;
+}
+@media (max-width: 980px) { .project-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .project-grid { grid-template-columns: 1fr; } }
+
+.pcard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-2);
+  position: relative;
+  transition: border-color .35s var(--ease), transform .45s var(--ease-out);
+}
+.pcard:hover { border-color: var(--rule-strong); transform: translateY(-4px); }
+
+.pcard-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-3);
+}
+.pcard-media img,
+.pcard-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* over-scaled so the parallax drift never pulls an edge into frame */
+  transform: scale(1.06);
+  transition: transform .6s var(--ease-out);
+}
+.pcard:hover .pcard-media img,
+.pcard:hover .pcard-media video { transform: scale(1.12); }
+
+/* placeholder for a project with nothing shot yet */
+.pcard-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  background:
+    radial-gradient(circle at 32% 30%, var(--accent-soft), transparent 62%),
+    repeating-linear-gradient(135deg, transparent 0 11px, rgba(237,237,235,.035) 11px 12px),
+    var(--bg-3);
+}
+.pcard-placeholder svg { color: var(--accent); opacity: .5; }
+
+.pcard-num {
+  position: absolute;
+  top: 12px; left: 14px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  color: #f2efe9;
+  background: rgba(10,10,8,.55);
+  backdrop-filter: blur(8px);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+.pcard-flag {
+  position: absolute;
+  top: 12px; right: 14px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--rule-strong);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.pcard-body {
+  padding: 18px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+.pcard-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(19px, 1.7vw, 24px);
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  margin: 0;
+  color: var(--ink);
+  transition: color .3s var(--ease);
+}
+.pcard-name .italic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--muted);
+}
+.pcard:hover .pcard-name { color: var(--accent); }
+
+.pcard-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+.pcard-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+/* .tag chips are scoped to .work-row elsewhere, so cards need their own */
+.pcard-tags .tag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 4px 9px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.pcard-yr {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .06em;
+  flex-shrink: 0;
+}
+.pcard-arrow {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-2);
+  background: var(--bg-2);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease-out),
+              background .3s var(--ease), color .3s var(--ease);
+}
+.pcard:hover .pcard-arrow {
+  opacity: 1;
+  transform: translateY(0);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0c0c0a;
+}
+@media (hover: none) { .pcard-arrow { opacity: 1; transform: none; } }

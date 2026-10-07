@@ -35,14 +35,14 @@ const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http:/
         font-family="DejaVu Sans Mono, Liberation Mono, Courier New, monospace"
         font-size="26"
         letter-spacing="4"
-        fill="#555555">SOFTWARE DEVELOPER · ABELTEAME.DEV</text>
+        fill="#555555">SENIOR FULL-STACK ENGINEER · ABELTEAME.DEV</text>
 
   <!-- Stack line -->
   <text x="64" y="452"
         font-family="DejaVu Sans Mono, Liberation Mono, Courier New, monospace"
         font-size="19"
         letter-spacing="2"
-        fill="#333333">Vue · React · TypeScript · Node.js · Elixir · Kotlin</text>
+        fill="#333333">Next.js · React · TypeScript · Node.js · Prisma · Vue 3</text>
 
   <!-- Accent bar -->
   <rect x="60" y="498" width="72" height="3" rx="1.5" fill="#ff5a1f"/>

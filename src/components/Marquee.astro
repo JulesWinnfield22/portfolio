@@ -1,22 +1,23 @@
 ---
 // items are duplicated in markup for the GSAP xPercent:-50 loop trick
+const items = [
+  { text: 'SENIOR FULL-STACK ENGINEER',           italic: false },
+  { text: 'next.js & react 19',                   italic: true  },
+  { text: 'ADDIS ABABA · UTC+3',                  italic: false },
+  { text: 'vue 3 when it fits',                   italic: true  },
+  { text: 'LOGISTICS · HEALTHCARE · INSURANCE',   italic: false },
+  { text: 'claude code, every day',               italic: true  },
+  { text: 'OPEN FOR INTERESTING WORK',            italic: false },
+];
 ---
 <section class="marquee" aria-hidden="true">
   <div class="marquee-track">
-    <span>SOFTWARE DEVELOPER</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span class="italic">vue.js by default</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span>ADDIS ABABA · UTC+3</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span class="italic">react when necessary</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span>HEALTHCARE · INSURANCE · FINTECH</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span class="italic">building since 2019</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span>OPEN FOR INTERESTING WORK</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <!-- duplicate for seamless loop -->
-    <span>SOFTWARE DEVELOPER</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span class="italic">vue.js by default</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span>ADDIS ABABA · UTC+3</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span class="italic">react when necessary</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span>HEALTHCARE · INSURANCE · FINTECH</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span class="italic">building since 2019</span><span class="star"><svg><use href="#logo-at"/></svg></span>
-    <span>OPEN FOR INTERESTING WORK</span><span class="star"><svg><use href="#logo-at"/></svg></span>
+    {/* rendered twice — the loop tween scrolls one full copy out of frame */}
+    {[0, 1].map(() => items.map(({ text, italic }) => (
+      <>
+        <span class={italic ? 'italic' : undefined}>{text}</span>
+        <span class="star"><svg><use href="#logo-at"/></svg></span>
+      </>
+    )))}
   </div>
 </section>
